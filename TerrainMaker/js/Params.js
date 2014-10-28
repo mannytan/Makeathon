@@ -34,9 +34,8 @@ FACETER.Params = function(name) {
 			facetWrap: .5001,
 			facetDepthSize: 10,
 			facetVerticalOffset: -.5001,
-			facetVerticalSize: 1.0001,
-			isDebugging: false,
-			startTotal: 40,
+			facetVerticalSize: 0.0,
+			isDebugging: true,
 			saveSTL: function(){
 				scope.scope3d.convertMesh();
 			},
@@ -48,9 +47,6 @@ FACETER.Params = function(name) {
 			},
 			orderize: function(){
 				scope.scope3d.orderizeElements();
-			},
-			markize: function(){
-				scope.scope3d.markize();
 			}
 			
 		};
@@ -76,7 +72,6 @@ FACETER.Params = function(name) {
 		this.gui.add(FACETER.Params, 'addParticle').name('addParticle');
 		this.gui.add(FACETER.Params, 'randomize').name('randomize');
 		this.gui.add(FACETER.Params, 'orderize').name('orderize');
-		this.gui.add(FACETER.Params, 'markize').name('m');
 		this.gui.add(FACETER.Params, 'saveSTL').name('saveSTL');
 
 		f1.open();

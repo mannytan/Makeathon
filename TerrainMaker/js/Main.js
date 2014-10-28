@@ -28,7 +28,7 @@ FACETER.Main = function(name) {
 	this.stats.domElement.style.position = 'absolute';
 
 	// 3d
-	this.faceter3D = null;
+	this.boilerPlate3D = null;
 	this.terrain3D = null;
 
 	this.init = function() {
@@ -37,22 +37,15 @@ FACETER.Main = function(name) {
 
 		this.gui = new FACETER.Params("Params");
 		this.gui.addEventListener("TOGGLE_VIEW", function() {
-			scope.faceter3D.toggleWireFrame();
+			scope.terrain3D.toggleWireFrame();
 		});
 		this.gui.createGui();
-
-		this.faceter3D = new FACETER.Faceter3D("Faceter3D");
-		this.faceter3D.init();
-		this.faceter3D.setDimensions(this.stageWidth,this.stageHeight);
-		this.faceter3D.createEnvironment();
-		this.faceter3D.createLights();
-		this.faceter3D.createElements();
-		this.faceter3D.createListeners();
 		
 		this.terrain3D = new FACETER.Terrain3D("Terrain");
 		this.terrain3D.init();
+		this.terrain3D.setDimensions(this.stageWidth,this.stageHeight);
 
-		this.gui.set3DScope(this.faceter3D);
+		this.gui.set3DScope(this.terrain3D);
 		this.gui.createListeners();
 
 		this.loader = document.getElementById('loader');
@@ -68,11 +61,10 @@ FACETER.Main = function(name) {
 		return this;
 	};
 
-
 	this.update = function() {
 
-		this.faceter3D.parse();
-		this.faceter3D.draw();
+		this.terrain3D.parse();
+		this.terrain3D.draw();
 		return this;
 	};
 
@@ -98,14 +90,14 @@ FACETER.Main = function(name) {
 
 	this.play = function() {
 		this.isPaused = false;
-		this.faceter3D.enableTrackBall();
+		this.terrain3D.enableTrackBall();
 		this.loop();
 		return this;
 	};
 
 	this.pause = function() {
 		this.isPaused = true;
-		this.faceter3D.disableTrackBall();
+		this.terrain3D.disableTrackBall();
 	};
 
 	this.createListeners = function() {
@@ -126,7 +118,7 @@ FACETER.Main = function(name) {
 
 		// save stl
 		if (event.keyCode === 83) {
-			this.faceter3D.convertMesh();
+			this.terrain3D.convertMesh();
 		}
 	};
 
@@ -134,8 +126,8 @@ FACETER.Main = function(name) {
 		this.stageWidth = window.innerWidth - FACETER.Params.guiWidth;
 		this.stageHeight = window.innerHeight;
 
-		this.faceter3D.setDimensions(this.stageWidth,this.stageHeight);
-		this.faceter3D.resize();
+		this.terrain3D.setDimensions(this.stageWidth,this.stageHeight);
+		this.terrain3D.resize();
 
 		this.stats.domElement.style.top = (10) + 'px';
 		this.stats.domElement.style.right = (FACETER.Params.guiWidth + 10) + 'px';

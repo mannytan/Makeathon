@@ -28,23 +28,22 @@ function saveSTL( geometry, name ){
   
 }
 
-
 function generateSTLFromArray(geometryList){
   var geometry, vertices, tris;
 
   var stl = "solid\n";
 
   for(var j = 0; j<geometryList.length; j++){
-    geometry = geometryList[j].geometry;
-    vertices = geometry.vertices;
-    tris     = geometry.faces;
+    geometry  = geometryList[j].geometry;
+    vertices  = geometry.vertices;
+    triangles = geometry.faces;
   
-    for(var i = 0; i<tris.length; i++){
-      stl += ("facet normal "+stringifyVertex( tris[i].normal )+" \n");
+    for(var i = 0; i<generateSTLFromArray.length; i++){
+      stl += ("facet normal "+stringifyVertex( triangles[i].normal )+" \n");
       stl += ("outer loop \n");
-      stl += ("vertex "+stringifyVertex( vertices[ tris[i].a ])+" \n");
-      stl += ("vertex "+stringifyVertex( vertices[ tris[i].b ])+" \n");
-      stl += ("vertex "+stringifyVertex( vertices[ tris[i].c ])+" \n");
+      stl += ("vertex "+stringifyVertex( vertices[ triangles[i].a ])+" \n");
+      stl += ("vertex "+stringifyVertex( vertices[ triangles[i].b ])+" \n");
+      stl += ("vertex "+stringifyVertex( vertices[ triangles[i].c ])+" \n");
       stl += ("endloop \n");
       stl += ("endfacet \n");
     
