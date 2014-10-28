@@ -6,7 +6,6 @@
 
 var FACETER = FACETER || {};
 
-
 FACETER.Main = function(name) {
 	var scope = this;
 
@@ -30,11 +29,11 @@ FACETER.Main = function(name) {
 
 	// 3d
 	this.faceter3D = null;
+	this.terrain3D = null;
 
 	this.init = function() {
 		this.traceFunction("init");
 		this.createListeners();
-
 
 		this.gui = new FACETER.Params("Params");
 		this.gui.addEventListener("TOGGLE_VIEW", function() {
@@ -43,9 +42,6 @@ FACETER.Main = function(name) {
 		this.gui.createGui();
 
 		this.faceter3D = new FACETER.Faceter3D("Faceter3D");
-		this.faceter3D.addEventListener("ON_THING_DOWN", function() {
-			scope.traceFunction("ON_THING_DOWN");
-		});
 		this.faceter3D.init();
 		this.faceter3D.setDimensions(this.stageWidth,this.stageHeight);
 		this.faceter3D.createEnvironment();
@@ -53,6 +49,8 @@ FACETER.Main = function(name) {
 		this.faceter3D.createElements();
 		this.faceter3D.createListeners();
 		
+		this.terrain3D = new FACETER.Terrain3D("Terrain");
+		this.terrain3D.init();
 
 		this.gui.set3DScope(this.faceter3D);
 		this.gui.createListeners();

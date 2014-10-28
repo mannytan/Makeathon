@@ -125,7 +125,7 @@ FOLD.Fold3D = function(name) {
 			opacity: 0.05,
 			wireframe:true
 		});
-		geometry = new THREE.CubeGeometry(width, height, depth);
+		geometry = new THREE.BoxGeometry(width, height, depth);
 		this.cube = new THREE.Mesh(geometry, material);
 
 		this.base.add(this.cube);

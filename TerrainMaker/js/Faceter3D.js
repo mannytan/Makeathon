@@ -13,7 +13,6 @@ FACETER.Faceter3D = function(name) {
 
 	// 3d vars
 	this.container = null;
-	this.projector = null;
 	this.camera = null;
 	this.scene = null;
 	this.raycaster = null;
@@ -60,7 +59,6 @@ FACETER.Faceter3D = function(name) {
 	this.createEnvironment = function() {
 		// this.traceFunction("createEnvironment");
 
-		this.projector = new THREE.Projector(); // used for mouse position in 3d space
 		this.scene = new THREE.Scene();
 		this.base = new THREE.Object3D();
 		this.scene.add(this.base);
@@ -96,8 +94,6 @@ FACETER.Faceter3D = function(name) {
 
 		this.container = document.getElementById('container3D');
 		this.container.appendChild(this.renderer.domElement);
-
-		projector = new THREE.Projector();
 
 		return this;
 	};
@@ -193,12 +189,12 @@ FACETER.Faceter3D = function(name) {
 			wireframe:true
 		});
 
-		geometry = new THREE.CubeGeometry(500, 500, 500);
+		geometry = new THREE.BoxGeometry(500, 500, 500);
 		this.base.remove(this.outerCube);
 		this.outerCube = new THREE.Mesh(geometry, material);
 		this.base.add(this.outerCube);
 
-		geometry = new THREE.CubeGeometry(50, 50, 50);
+		geometry = new THREE.BoxGeometry(50, 50, 50);
 		this.base.remove(this.innerCube);
 		this.innerCube = new THREE.Mesh(geometry, material);
 		// this.base.add(this.innerCube);
@@ -321,7 +317,7 @@ FACETER.Faceter3D = function(name) {
 		var scalar = 100;
 		this.base.remove( this.particles );
 		geometry = new THREE.Geometry();
-		material = new THREE.ParticleBasicMaterial( { 
+		material = new THREE.PointCloudMaterial( { 
 			color:0xFF0000, 
 			size: 4
 		} );
@@ -333,7 +329,7 @@ FACETER.Faceter3D = function(name) {
 
 		}
 
-		this.particles = new THREE.ParticleSystem( geometry, material );
+		this.particles = new THREE.PointCloud( geometry, material );
 		this.base.add( this.particles );
 		this.particles.scale.set(scalar,scalar,1);
 		this.particles.position.z = -200;
