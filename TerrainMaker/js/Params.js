@@ -39,14 +39,14 @@ FACETER.Params = function(name) {
 			saveSTL: function(){
 				scope.scope3d.convertMesh();
 			},
-			addParticle: function(){
-				scope.scope3d.addParticle();
-			},
 			randomize: function(){
 				scope.scope3d.randomizeElements();
 			},
 			orderize: function(){
 				scope.scope3d.orderizeElements();
+			},
+			updateValues: function(){
+				scope.scope3d.updateValues();
 			}
 			
 		};
@@ -67,12 +67,18 @@ FACETER.Params = function(name) {
 		FACETER.Sliders.facetRadius = f1.add(FACETER.Params, 'facetRadius', 0, 200).step(1).name('facet Radius');
 		FACETER.Sliders.facetHeight = f1.add(FACETER.Params, 'facetHeight', 0, 300).step(1).name('facet Height');
 		FACETER.Sliders.facetWrap = f1.add(FACETER.Params, 'facetWrap', 0, 1.0).step(0.0005).name('facet Wrap');
-		FACETER.Sliders.facetDepthSize = f1.add(FACETER.Params, 'facetDepthSize', -50.0, 50.0).step(1).name('facet depth');
+		FACETER.Sliders.facetDepthSize = f1.add(FACETER.Params, 'facetDepthSize', 0.0, 100.0).step(1).name('facet depth');
 		FACETER.Sliders.facetVerticalOffset = f1.add(FACETER.Params, 'facetVerticalSize', 0.0, 1.0).step(0.0005).name('facet size');
-		this.gui.add(FACETER.Params, 'addParticle').name('addParticle');
 		this.gui.add(FACETER.Params, 'randomize').name('randomize');
 		this.gui.add(FACETER.Params, 'orderize').name('orderize');
 		this.gui.add(FACETER.Params, 'saveSTL').name('saveSTL');
+
+		FACETER.Sliders.speed.onChange(function(value) { FACETER.Params.updateValues(); });
+		FACETER.Sliders.facetRadius.onChange(function(value) { FACETER.Params.updateValues(); });
+		FACETER.Sliders.facetHeight.onChange(function(value) { FACETER.Params.updateValues(); });
+		FACETER.Sliders.facetWrap.onChange(function(value) { FACETER.Params.updateValues(); });
+		FACETER.Sliders.facetDepthSize.onChange(function(value) { FACETER.Params.updateValues(); });
+		FACETER.Sliders.facetVerticalOffset.onChange(function(value) { FACETER.Params.updateValues(); });
 
 		f1.open();
 

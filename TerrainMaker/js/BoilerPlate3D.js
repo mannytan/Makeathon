@@ -42,7 +42,6 @@ FACETER.BoilerPlate3D = function(name) {
 	// instantiation
 	// ---------------------------------------------------------
 	this.init = function() {
-		this.traceFunction("init");
 
 		// this.perlin = new ClassicalNoise();
 		this.perlin = new SimplexNoise();
@@ -127,6 +126,8 @@ FACETER.BoilerPlate3D = function(name) {
 		this.createBackgroundElements();
 		this.orderizeDiamond();
 		this.createPrimaryElements();
+		this.parsePrimaryElements();
+
 
 		return this;
 	};
@@ -136,6 +137,7 @@ FACETER.BoilerPlate3D = function(name) {
 		this.removeFacets();
 		this.randomizeDiamond();
 		this.createPrimaryElements();
+		this.parsePrimaryElements();
 
 		return this;
 	};
@@ -144,7 +146,7 @@ FACETER.BoilerPlate3D = function(name) {
 		this.removeFacets();
 		this.orderizeDiamond();
 		this.createPrimaryElements();
-
+		this.parsePrimaryElements();
 		return this;
 	};
 
@@ -202,31 +204,24 @@ FACETER.BoilerPlate3D = function(name) {
 
 		this.cachedParticles = [];
 
-		var xIncrement = 30;
-		var yIncrement = 10;
-		var total = xIncrement * yIncrement;
 		var i, j;
 		var seed;
 
 		// create mesh
+		var margin = 0.01;
 		seed = 0;
-		for ( j = 0; j < yIncrement; j ++ ) {
-			for ( i = 0; i < xIncrement; i ++ ) {
+		for ( j = 0; j < this.totalYIncrements; j ++ ) {
+			for ( i = 0; i < this.totalXIncrements; i ++ ) {
 				vertex = new THREE.Vector3();
 
-				vertex.x = i/xIncrement;
-				vertex.y = j/yIncrement;
-
-				// vertex.x = (i%seed) / seed + 1/seed*.5;
-				// vertex.y = 1-((i/seed)|0)  / seed - 1/seed*.5;
-				vertex.z = Math.random();
+				vertex.x = i/this.totalXIncrements;
+				vertex.y = j/this.totalYIncrements;
+				vertex.z = this.zHeight[seed];
 				this.cachedParticles.push( vertex );
 
 				seed++;
 			}
 		}
-
-		this.totalParticles = seed;
 
 		return this;
 	};
@@ -352,7 +347,7 @@ FACETER.BoilerPlate3D = function(name) {
 	this.parse = function() {
 
 		this.base.rotation.y += FACETER.Params.orbitSpeed;
-		this.parsePrimaryElements();
+		// this.parsePrimaryElements();
 
 		this.count+=FACETER.Params.speed;
 
@@ -360,7 +355,6 @@ FACETER.BoilerPlate3D = function(name) {
 	};
 
 	this.parsePrimaryElements = function() {
-
 		var i, j, id, x, y, z, percentage, radius, radiusBuffer; 								// generic
 		var particle, geometry, material, vertex, cachedVertex, facet, triangles; 	// custom
 
@@ -374,13 +368,14 @@ FACETER.BoilerPlate3D = function(name) {
 		var facetDepthSize = FACETER.Params.facetDepthSize;
 
 		for ( i = 0; i < total; i ++ ) {
+
 			for ( j = 0; j < 3; j ++ ) {
 				vertex = this.facets[i].geometry.vertices[j];
 				cachedVertex = this.cachedFacets[i].geometry.vertices[j];
 				radiusBuffer = cachedVertex.z*facetDepthSize;
 				radius = Math.cos( ( cachedVertex.y + facetVerticalOffset ) * facetVerticalSize * Math.PI) * facetRadius;
 				radius += radiusBuffer;
-				percentage = (cachedVertex.x) * Math.PI * 2.0 * facetWrap;
+				percentage = (cachedVertex.x/(1-1/this.totalXIncrements)) * Math.PI * 2.0 * facetWrap;
 				vertex.x = Math.cos(percentage)*radius;
 				vertex.z = Math.sin(percentage)*radius; 
 				vertex.y = cachedVertex.y * facetHeight;
@@ -389,12 +384,21 @@ FACETER.BoilerPlate3D = function(name) {
 			this.facets[i].position.y = -facetHeight*.5;
 			this.facetWires[i].position.y = -facetHeight*.5;
 
+		}
+
+		this.computeNormals();
+	};
+
+	this.computeNormals = function() {
+		this.traceFunction("computeNormals");
+		var i;
+		var total = this.totalFacets;
+
+		for ( i = 0; i < total; i ++ ) {
 			this.facets[i].geometry.computeFaceNormals(); 
 			this.facets[i].geometry.computeVertexNormals(); 
 		}
-
 	};
-
 	// ---------------------------------------------------------
 	// draw elements
 	// ---------------------------------------------------------
@@ -433,6 +437,7 @@ FACETER.BoilerPlate3D = function(name) {
 		return this;
 	};
 
+
 	// ---------------------------------------------------------
 	// public function
 	// ---------------------------------------------------------
@@ -444,36 +449,20 @@ FACETER.BoilerPlate3D = function(name) {
 		return this;
 	};
 
-	this.addParticle = function(){
-		// this.traceFunction("addParticle");
-
-		this.removeFacets();
-
-		// create mesh
-		vertex = new THREE.Vector3();
-		vertex.x = Math.random();
-		vertex.y = Math.random();
-		vertex.z = 0;
-		this.cachedParticles.push( vertex );
-
-		this.totalParticles++;
-
-		this.createPrimaryElements();
-
-		return this;
-	};
-
 	// ---------------------------------------------------------
 	// public functions
 	// ---------------------------------------------------------
 
+	this.updateValues = function(){
+		this.parsePrimaryElements();
+	};
 	this.convertMesh = function(){
 		this.traceFunction("convertMesh");
 
 		// var geometry = this.customPlanes[1].geometry;
 		// saveSTL(geometry,"test_01");
 		saveSTLFromArray(this.facets,"facets");
-	}
+	};
 
 	this.enableTrackBall = function() {
 		this.controls.enabled = true;
@@ -527,5 +516,6 @@ FACETER.BoilerPlate3D = function(name) {
 
 };
 
-FACETER.BoilerPlate3D.prototype = new UNCTRL.BoilerPlate();
+FACETER.BoilerPlate3D.prototype = Object.create(UNCTRL.BoilerPlate.prototype);
 FACETER.BoilerPlate3D.prototype.constructor = FACETER.BoilerPlate3D;
+FACETER.BoilerPlate3D.prototype.parent = UNCTRL.BoilerPlate.prototype;
