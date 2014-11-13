@@ -160,32 +160,6 @@ TERRAIN.BoilerPlate3D = function(name) {
 		var material;
 		var geometry;
 
-		// material = new THREE.MeshPhongMaterial({
-		// 	color:0xFF0000,
-		// 	shading:THREE.FlatShading,
-		// 	vertexColors:THREE.FaceColors
-		// });
-		// // material = new THREE.MeshNormalMaterial();
-
-		// material.side = THREE.sideFront;
-		// // material.shading = THREE.FlatShading;
-		// material.wireframe = false;
-		// geometry = new THREE.PlaneGeometry( 300, 300, this.totalXIncrements, this.totalYIncrements );
-		// this.sideFront = new THREE.Mesh( geometry, material );
-		// this.scene.add( this.sideFront );
-
-
-
-		// var i;
-		// var total;
-		// total = this.sideFront.geometry.vertices.length;
-		// for(i = 0; i < total; i++) {
-		// 	this.sideFront.geometry.vertices[i].z = Math.cos(((this.count*0.05+i)/total*100)*Math.PI*2)*100;
-		// }
-		// this.sideFront.geometry.computeFaceNormals();
-		// this.sideFront.geometry.computeVertexNormals();
-
-
 		this.scene.remove(this.sideFront);
 		material = new THREE.MeshPhongMaterial({
 			color:0xFF0000,
@@ -232,23 +206,10 @@ TERRAIN.BoilerPlate3D = function(name) {
 
 	this.parsePrimaryElements = function() {
 
+		this.createPrimaryElements();
+		
 		var i;
 		var total;
-
-		// this.scene.remove(this.sideFront);
-		// material = new THREE.MeshPhongMaterial({
-		// 	color:0xFF0000,
-		// 	shading:THREE.FlatShading,
-		// 	vertexColors:THREE.FaceColors
-		// });
-		// // material = new THREE.MeshNormalMaterial();
-
-		// material.side = THREE.sideFront;
-		// // material.shading = THREE.FlatShading;
-		// material.wireframe = false;
-		// geometry = new THREE.PlaneGeometry( 300, 300, this.totalXIncrements, this.totalYIncrements );
-		// this.sideFront = new THREE.Mesh( geometry, material );
-		// this.scene.add( this.sideFront );
 
 		total = this.sideFront.geometry.vertices.length;
 
@@ -258,12 +219,12 @@ TERRAIN.BoilerPlate3D = function(name) {
 		var x,y;
 		var speed = this.count * 0.05;
 		var perlinHeight = TERRAIN.Params.perlinHeight;
-		var perlinSize = TERRAIN.Params.perlinSize;
+		var perlinResolution = TERRAIN.Params.perlinResolution;
 
 		for(i = 0; i < total; i++) {
 			y = parseInt(i/totalX);
 			x = i%totalX;
-			this.sideFront.geometry.vertices[i].z = this.perlin.noise((x*perlinSize+speed),(y*perlinSize+speed));
+			this.sideFront.geometry.vertices[i].z = this.perlin.noise((x*perlinResolution+speed),(y*perlinResolution+speed));
 			this.sideFront.geometry.vertices[i].z *= perlinHeight;
 		}
 
@@ -275,16 +236,20 @@ TERRAIN.BoilerPlate3D = function(name) {
 		this.sideFront.geometry.tangentsNeedUpdate = true;
 		this.sideFront.geometry.colorsNeedUpdate = true;
 		this.sideFront.geometry.elementsNeedUpdate = true;
+	
 
 
-		// // helpers
-		// this.scene.remove(this.wHelper);
-		// this.wHelper = new THREE.WireframeHelper( this.sideFront );
-		// this.scene.add( this.wHelper );
+		if(this.wHelper) { this.scene.remove(this.wHelper) };
+		if(this.aHelper) { this.scene.remove(this.aHelper) };
 
-		// this.scene.remove(this.aHelper);
-		// this.aHelper = new THREE.FaceNormalsHelper( this.sideFront,20);
-		// this.scene.add( this.aHelper );
+		if(TERRAIN.Params.isDebugging) {
+			// helpers
+			this.wHelper = new THREE.WireframeHelper( this.sideFront );
+			this.scene.add( this.wHelper );
+
+			this.aHelper = new THREE.FaceNormalsHelper( this.sideFront,20);
+			this.scene.add( this.aHelper );
+		}
 
 
 	};

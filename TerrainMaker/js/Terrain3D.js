@@ -17,8 +17,8 @@ TERRAIN.Terrain3D = function(parent) {
 		this.blockWidth = 30;
 		this.blockDepth = 30;
 
-		this.totalXIncrements = 20;
-		this.totalYIncrements = 20;
+		this.totalXIncrements = 10;
+		this.totalYIncrements = 10;
 		this.totalParticles = this.totalXIncrements * this.totalYIncrements;
 		this.zHeight = [
 			0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.0,
