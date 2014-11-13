@@ -43,8 +43,8 @@
 	$(document).ready(function() {
 
 		if(Modernizr.webgl) {
-			var faceter = new FACETER.Main();
-			faceter.init();
+			var terrain3D = new TERRAIN.Main();
+			terrain3D.init();
 		} else {
 			$('body').append('<img id="noWebGL" src="./img/noWebGL.png" />');
 		}

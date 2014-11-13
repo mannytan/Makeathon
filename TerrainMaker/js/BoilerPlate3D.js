@@ -4,7 +4,7 @@
  */
 
 
-FACETER.BoilerPlate3D = function(name) {
+TERRAIN.BoilerPlate3D = function(name) {
 	var scope = this;
 
 	UNCTRL.BoilerPlate.call(this);
@@ -26,23 +26,18 @@ FACETER.BoilerPlate3D = function(name) {
 	this.stageOffsetX = 0;
 	this.stageOffsetY = 0;
 
-	this.pointLightA = null;
-
-	this.particles = null;
-	this.facets = null;
-	this.facetWires = null;
-
-	this.totalParticles = null;
-	this.totalFacets = null;
-
-	this.cachedParticles = null;
-	this.cachedFacets = null;
+	this.sideBottom = null;
+	this.sideTop = null;
+	this.sideLeft = null;
+	this.sideRight = null;
+	this.sideFront = null;
+	this.sideBack = null;
 
 	// ---------------------------------------------------------
 	// instantiation
 	// ---------------------------------------------------------
 	this.init = function() {
-
+		this.traceFunction("this");
 		// this.perlin = new ClassicalNoise();
 		this.perlin = new SimplexNoise();
 		this.mouse = new THREE.Vector2();
@@ -103,16 +98,16 @@ FACETER.BoilerPlate3D = function(name) {
 		this.traceFunction("createLights");
 		// this.scene.add( new THREE.AmbientLight( 0xCCCCCC ) );
 
+		// var light	= new THREE.AmbientLight(  0x000000 );
+		// this.scene.add( light );
 
-		var light	= new THREE.AmbientLight( Math.random() * 0xffffff );
-		this.scene.add( light );
-		var light	= new THREE.DirectionalLight( Math.random() * 0xffffff );
-		light.position.set( Math.random(), Math.random(), Math.random() ).normalize();
-		this.scene.add( light );
-		var light	= new THREE.PointLight( Math.random() * 0xffffff );
-		light.position.set( Math.random()-0.5, Math.random()-0.5, Math.random()-0.5 )
-				.normalize().multiplyScalar(1.2);
-		this.scene.add( light );
+		this.light	= new THREE.DirectionalLight(  0xffffff );
+		this.light.position.set( 0.75, 0.75, 1.0 ).normalize();
+		this.scene.add( this.light );
+
+		// var light	= new THREE.PointLight(  0xffffff );
+		// light.position.set( 0,0,1 ).normalize();
+		// this.scene.add( light );
 
 		return this;
 	};
@@ -124,29 +119,9 @@ FACETER.BoilerPlate3D = function(name) {
 	this.createElements = function() {
 		this.traceFunction("createElements");
 		this.createBackgroundElements();
-		this.orderizeDiamond();
 		this.createPrimaryElements();
 		this.parsePrimaryElements();
 
-
-		return this;
-	};
-
-	this.randomizeElements = function() {
-		this.traceFunction("randomizeElements");
-		this.removeFacets();
-		this.randomizeDiamond();
-		this.createPrimaryElements();
-		this.parsePrimaryElements();
-
-		return this;
-	};
-
-	this.orderizeElements = function() {
-		this.removeFacets();
-		this.orderizeDiamond();
-		this.createPrimaryElements();
-		this.parsePrimaryElements();
 		return this;
 	};
 
@@ -155,7 +130,7 @@ FACETER.BoilerPlate3D = function(name) {
 		var color = 0x000000;
 		var geometry;
 		var material;
-		var margin =  FACETER.Params.plateMargin;
+		var margin =  TERRAIN.Params.plateMargin;
 
 		//  -------------------------------------
 		//  draw cube
@@ -181,151 +156,53 @@ FACETER.BoilerPlate3D = function(name) {
 		return this;
 	};
 
-	this.randomizeDiamond = function(){
-
-		this.cachedParticles = [];
-	
-		var total = this.totalParticles;
-
-		// create mesh
-		for ( i = 0; i < total; i ++ ) {
-			vertex = new THREE.Vector3();
-			vertex.x = Math.random();
-			vertex.y = Math.random();
-			vertex.z = Math.random();
-			this.cachedParticles.push( vertex );
-		}
-
-		return this;
-	};
-
-	// even spaces out cachedParticles
-	this.orderizeDiamond = function(){
-
-		this.cachedParticles = [];
-
-		var i, j;
-		var seed;
-
-		// create mesh
-		var margin = 0.01;
-		seed = 0;
-		for ( j = 0; j < this.totalYIncrements; j ++ ) {
-			for ( i = 0; i < this.totalXIncrements; i ++ ) {
-				vertex = new THREE.Vector3();
-
-				vertex.x = i/this.totalXIncrements;
-				vertex.y = j/this.totalYIncrements;
-				vertex.z = this.zHeight[seed];
-				this.cachedParticles.push( vertex );
-
-				seed++;
-			}
-		}
-
-		return this;
-	};
-
 	this.createPrimaryElements = function() {
+		var material;
+		var geometry;
 
-		// create particle Mesh
-		var i, id, x, y, z, percentage; 								// generic
-		var particle, geometry, material, vertex, facet, triangles; 	// custom
-		var total = this.totalParticles;
-		var scalar = 100;
-		this.base.remove( this.particles );
-		geometry = new THREE.Geometry();
-		material = new THREE.PointCloudMaterial( { 
-			color:0xFF0000, 
-			size: 4
-		} );
+		// material = new THREE.MeshPhongMaterial({
+		// 	color:0xFF0000,
+		// 	shading:THREE.FlatShading,
+		// 	vertexColors:THREE.FaceColors
+		// });
+		// // material = new THREE.MeshNormalMaterial();
 
-		for ( i = 0; i < total; i ++ ) {
-
-			vertex = this.cachedParticles[i].clone();
-			geometry.vertices.push( vertex );
-
-		}
-
-		this.particles = new THREE.PointCloud( geometry, material );
-		this.base.add( this.particles );
-		this.particles.scale.set(scalar,scalar,1);
-		this.particles.position.z = -200;
-		this.particles.position.x = scalar*-.5;
-		this.particles.position.y = scalar*-.5;
-		this.particles.visible = FACETER.Params.isDebugging;
-
-		// create facets
-		// facets are created using the delunay triangulate function
-		// it copies all points and reparses them into triangles
-		triangles = triangulate(this.particles.geometry.vertices);
-		this.totalFacets = triangles.length;
-
-		this.cachedFacets = [];
-		this.facets = [];
-		this.facetWires = [];
-
-		material = new THREE.MeshBasicMaterial( { 
-			color: 0xFF0000, 
-			wireframe:true, 
-			transparent:true, 
-			opacity:0.25 
-		} );
+		// material.side = THREE.sideFront;
+		// // material.shading = THREE.FlatShading;
+		// material.wireframe = false;
+		// geometry = new THREE.PlaneGeometry( 300, 300, this.totalXIncrements, this.totalYIncrements );
+		// this.sideFront = new THREE.Mesh( geometry, material );
+		// this.scene.add( this.sideFront );
 
 
-		for(i = 0; i < this.totalFacets; i++) {
-			geometry = new THREE.Geometry();
 
-			geometry.vertices.push(triangles[i].a.clone());
-			geometry.vertices.push(triangles[i].b.clone());
-			geometry.vertices.push(triangles[i].c.clone());
-			geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
+		// var i;
+		// var total;
+		// total = this.sideFront.geometry.vertices.length;
+		// for(i = 0; i < total; i++) {
+		// 	this.sideFront.geometry.vertices[i].z = Math.cos(((this.count*0.05+i)/total*100)*Math.PI*2)*100;
+		// }
+		// this.sideFront.geometry.computeFaceNormals();
+		// this.sideFront.geometry.computeVertexNormals();
 
-			geometry.computeFaceNormals(); 
-			geometry.computeVertexNormals();
 
-			facet = new THREE.Mesh( geometry, material );
-			this.cachedFacets.push(facet);
-			this.base.add(this.cachedFacets[i]);
-			facet.scale.set(scalar,scalar,1);
-			facet.position.z = -100;
-			facet.position.x = scalar*-.5;
-			facet.position.y = scalar*-.5;
-			facet.visible = FACETER.Params.isDebugging;
-		}
+		this.scene.remove(this.sideFront);
+		material = new THREE.MeshPhongMaterial({
+			color:0xFF0000,
+			shading:THREE.FlatShading,
+			vertexColors:THREE.FaceColors
+		});
+		// material = new THREE.MeshNormalMaterial();
 
-		for(i = 0; i < this.totalFacets; i++) {
+		material.side = THREE.sideFront;
+		// material.shading = THREE.FlatShading;
+		material.wireframe = false;
+		geometry = new THREE.PlaneGeometry( 300, 300, this.totalXIncrements, this.totalYIncrements );
+		this.sideFront = new THREE.Mesh( geometry, material );
+		this.sideFront.receiveShadow = true;
 
-			geometry = new THREE.Geometry();
+		this.scene.add( this.sideFront );
 
-			geometry.vertices.push(triangles[i].a.clone());
-			geometry.vertices.push(triangles[i].b.clone());
-			geometry.vertices.push(triangles[i].c.clone());
-			geometry.faces.push( new THREE.Face3( 0, 1, 2 ) );
-
-			geometry.computeFaceNormals(); 
-			geometry.computeVertexNormals();
-
-			material = new THREE.MeshNormalMaterial( { 
-				side:THREE.DoubleSide
-			} );
-
-			facet = new THREE.Mesh( geometry, material );
-			this.facets.push(facet);
-			this.base.add(facet);
-
-			material = new THREE.MeshPhongMaterial( { 
-				color: 0x0099FF, 
-				wireframe:false, 
-				transparent:false, 
-				side:THREE.DoubleSide
-			} );
-
-			facet = new THREE.Mesh( geometry, material );
-			this.facetWires.push(facet);
-			// this.base.add(facet);
-
-		}
 
 		return this;
 	};
@@ -339,72 +216,97 @@ FACETER.BoilerPlate3D = function(name) {
 		return this;
 	};
 
-
 	// ---------------------------------------------------------
 	// parse elements
 	// ---------------------------------------------------------
 
 	this.parse = function() {
 
-		this.base.rotation.y += FACETER.Params.orbitSpeed;
-		// this.parsePrimaryElements();
+		this.base.rotation.y += TERRAIN.Params.orbitSpeed;
+		this.parsePrimaryElements();
 
-		this.count+=FACETER.Params.speed;
+		this.count+=TERRAIN.Params.perlinSpeed;
 
 		return this;
 	};
 
 	this.parsePrimaryElements = function() {
-		var i, j, id, x, y, z, percentage, radius, radiusBuffer; 								// generic
-		var particle, geometry, material, vertex, cachedVertex, facet, triangles; 	// custom
 
-		var total = this.totalFacets;
+		var i;
+		var total;
 
-		var facetRadius = FACETER.Params.facetRadius;
-		var facetHeight = FACETER.Params.facetHeight;
-		var facetWrap = FACETER.Params.facetWrap;
-		var facetVerticalOffset = FACETER.Params.facetVerticalOffset;
-		var facetVerticalSize = FACETER.Params.facetVerticalSize;
-		var facetDepthSize = FACETER.Params.facetDepthSize;
+		// this.scene.remove(this.sideFront);
+		// material = new THREE.MeshPhongMaterial({
+		// 	color:0xFF0000,
+		// 	shading:THREE.FlatShading,
+		// 	vertexColors:THREE.FaceColors
+		// });
+		// // material = new THREE.MeshNormalMaterial();
 
-		for ( i = 0; i < total; i ++ ) {
+		// material.side = THREE.sideFront;
+		// // material.shading = THREE.FlatShading;
+		// material.wireframe = false;
+		// geometry = new THREE.PlaneGeometry( 300, 300, this.totalXIncrements, this.totalYIncrements );
+		// this.sideFront = new THREE.Mesh( geometry, material );
+		// this.scene.add( this.sideFront );
 
-			for ( j = 0; j < 3; j ++ ) {
-				vertex = this.facets[i].geometry.vertices[j];
-				cachedVertex = this.cachedFacets[i].geometry.vertices[j];
-				radiusBuffer = cachedVertex.z*facetDepthSize;
-				radius = Math.cos( ( cachedVertex.y + facetVerticalOffset ) * facetVerticalSize * Math.PI) * facetRadius;
-				radius += radiusBuffer;
-				percentage = (cachedVertex.x/(1-1/this.totalXIncrements)) * Math.PI * 2.0 * facetWrap;
-				vertex.x = Math.cos(percentage)*radius;
-				vertex.z = Math.sin(percentage)*radius; 
-				vertex.y = cachedVertex.y * facetHeight;
-			}
+		total = this.sideFront.geometry.vertices.length;
 
-			this.facets[i].position.y = -facetHeight*.5;
-			this.facetWires[i].position.y = -facetHeight*.5;
+		var totalX = this.totalXIncrements+1;
+		var totalY = this.totalYIncrements+1;
 
+		var x,y;
+		var speed = this.count * 0.05;
+		var perlinHeight = TERRAIN.Params.perlinHeight;
+		var perlinSize = TERRAIN.Params.perlinSize;
+
+		for(i = 0; i < total; i++) {
+			y = parseInt(i/totalX);
+			x = i%totalX;
+			this.sideFront.geometry.vertices[i].z = this.perlin.noise((x*perlinSize+speed),(y*perlinSize+speed));
+			this.sideFront.geometry.vertices[i].z *= perlinHeight;
 		}
 
-		this.computeNormals();
+		this.sideFront.geometry.computeVertexNormals();
+		this.sideFront.geometry.computeFaceNormals();
+		// this.sideFront.geometry.dynamic = true;
+
+		this.sideFront.geometry.verticesNeedUpdate = true;
+		this.sideFront.geometry.tangentsNeedUpdate = true;
+		this.sideFront.geometry.colorsNeedUpdate = true;
+		this.sideFront.geometry.elementsNeedUpdate = true;
+
+
+		// // helpers
+		// this.scene.remove(this.wHelper);
+		// this.wHelper = new THREE.WireframeHelper( this.sideFront );
+		// this.scene.add( this.wHelper );
+
+		// this.scene.remove(this.aHelper);
+		// this.aHelper = new THREE.FaceNormalsHelper( this.sideFront,20);
+		// this.scene.add( this.aHelper );
+
+
 	};
 
 	this.computeNormals = function() {
-		this.traceFunction("computeNormals");
+		// this.traceFunction("computeNormals");
 		var i;
 		var total = this.totalFacets;
 
-		for ( i = 0; i < total; i ++ ) {
-			this.facets[i].geometry.computeFaceNormals(); 
-			this.facets[i].geometry.computeVertexNormals(); 
-		}
+		// for ( i = 0; i < total; i ++ ) {
+		// 	this.facets[i].geometry.computeFaceNormals(); 
+		// 	this.facets[i].geometry.computeVertexNormals(); 
+		// }
 	};
 	// ---------------------------------------------------------
 	// draw elements
 	// ---------------------------------------------------------
 
 	this.draw = function() {
+		// this.traceFunction("draw");
 
+		/*
 		// update particles
 		this.particles.geometry.verticesNeedUpdate = true;
 		this.particles.geometry.elementsNeedUpdate = true;
@@ -416,6 +318,7 @@ FACETER.BoilerPlate3D = function(name) {
 			this.facets[i].geometry.verticesNeedUpdate = true;
 			this.facetWires[i].geometry.verticesNeedUpdate = true;
 		}
+		*/
 
 		this.controls.update();
 		this.renderer.render( this.scene , this.camera );
@@ -427,13 +330,6 @@ FACETER.BoilerPlate3D = function(name) {
 	// listeners
 	// ---------------------------------------------------------
 	this.createListeners = function() {
-
-/*
-		this.container.addEventListener('mousemove', function(event) {
-			scope.onDocumentMouseMove(event);
-		}, false);
-*/
-		
 		return this;
 	};
 
@@ -443,9 +339,7 @@ FACETER.BoilerPlate3D = function(name) {
 	// ---------------------------------------------------------
 	this.reset = function(){
 		this.traceFunction("reset");
-		this.removeFacets();
-		this.randomizeDiamond();
-		this.createPrimaryElements();
+
 		return this;
 	};
 
@@ -486,36 +380,8 @@ FACETER.BoilerPlate3D = function(name) {
 
 	};
 
-	this.rotateAroundAxis = function(currentVector, vectorAxis, theta){
-		var ax = vectorAxis.x,
-			ay = vectorAxis.y,
-			az = vectorAxis.z,
-
-			ux = ax * currentVector.x,
-			uy = ax * currentVector.y,
-			uz = ax * currentVector.z,
-
-			vx = ay * currentVector.x,
-			vy = ay * currentVector.y,
-			vz = ay * currentVector.z,
-
-			wx = az * currentVector.x,
-			wy = az * currentVector.y,
-			wz = az * currentVector.z;
-
-			si = Math.sin(theta);
-			co = Math.cos(theta);
-
-			var xx = (ax * (ux + vy + wz) + (currentVector.x * (ay * ay + az * az) - ax * (vy + wz)) * co + (-wy + vz) * si);
-			var yy = (ay * (ux + vy + wz) + (currentVector.y * (ax * ax + az * az) - ay * (ux + wz)) * co + (wx - uz) * si);
-			var zz = (az * (ux + vy + wz) + (currentVector.z * (ax * ax + ay * ay) - az * (ux + vy)) * co + (-vx + uy) * si);
-
-		return (new THREE.Vector3(xx,yy,zz));
-
-	};
-
 };
 
-FACETER.BoilerPlate3D.prototype = Object.create(UNCTRL.BoilerPlate.prototype);
-FACETER.BoilerPlate3D.prototype.constructor = FACETER.BoilerPlate3D;
-FACETER.BoilerPlate3D.prototype.parent = UNCTRL.BoilerPlate.prototype;
+TERRAIN.BoilerPlate3D.prototype = Object.create(UNCTRL.BoilerPlate.prototype);
+TERRAIN.BoilerPlate3D.prototype.constructor = TERRAIN.BoilerPlate3D;
+TERRAIN.BoilerPlate3D.prototype.parent = UNCTRL.BoilerPlate.prototype;

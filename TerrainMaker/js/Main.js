@@ -4,9 +4,9 @@
  * Date: 03/20/12
  */
 
-var FACETER = FACETER || {};
+var TERRAIN = TERRAIN || {};
 
-FACETER.Main = function(name) {
+TERRAIN.Main = function(name) {
 	var scope = this;
 
 	UNCTRL.BoilerPlate.call(this);
@@ -30,18 +30,18 @@ FACETER.Main = function(name) {
 	// 3d
 	this.boilerPlate3D = null;
 	this.terrain3D = null;
-
+	
 	this.init = function() {
 		this.traceFunction("init");
 		this.createListeners();
 
-		this.gui = new FACETER.Params("Params");
+		this.gui = new TERRAIN.Params("Params");
 		this.gui.addEventListener("TOGGLE_VIEW", function() {
 			scope.terrain3D.toggleWireFrame();
 		});
 		this.gui.createGui();
 		
-		this.terrain3D = new FACETER.Terrain3D("Terrain");
+		this.terrain3D = new TERRAIN.Terrain3D("Terrain");
 		this.terrain3D.init();
 		this.terrain3D.setDimensions(this.stageWidth,this.stageHeight);
 
@@ -123,18 +123,18 @@ FACETER.Main = function(name) {
 	};
 
 	this.resize = function() {
-		this.stageWidth = window.innerWidth - FACETER.Params.guiWidth;
+		this.stageWidth = window.innerWidth - TERRAIN.Params.guiWidth;
 		this.stageHeight = window.innerHeight;
 
 		this.terrain3D.setDimensions(this.stageWidth,this.stageHeight);
 		this.terrain3D.resize();
 
 		this.stats.domElement.style.top = (10) + 'px';
-		this.stats.domElement.style.right = (FACETER.Params.guiWidth + 10) + 'px';
+		this.stats.domElement.style.right = (TERRAIN.Params.guiWidth + 10) + 'px';
 
 	};
 
 };
 
-FACETER.Main.prototype = new UNCTRL.BoilerPlate();
-FACETER.Main.prototype.constructor = FACETER.Main;
+TERRAIN.Main.prototype = new UNCTRL.BoilerPlate();
+TERRAIN.Main.prototype.constructor = TERRAIN.Main;

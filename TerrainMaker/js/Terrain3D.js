@@ -4,7 +4,7 @@
  */
 
 
-FACETER.Terrain3D = function(parent) {
+TERRAIN.Terrain3D = function(parent) {
 	var scope = this;
 
     this.parent.constructor.call(this);
@@ -18,7 +18,7 @@ FACETER.Terrain3D = function(parent) {
 		this.blockDepth = 30;
 
 		this.totalXIncrements = 20;
-		this.totalYIncrements = 10;
+		this.totalYIncrements = 20;
 		this.totalParticles = this.totalXIncrements * this.totalYIncrements;
 		this.zHeight = [
 			0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.0,
@@ -33,7 +33,7 @@ FACETER.Terrain3D = function(parent) {
 			0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 		];
 
-		this.displayBlankArray();
+		// this.displayBlankArray();
 
 		this.superInit.call(this);
 	}
@@ -54,9 +54,8 @@ FACETER.Terrain3D = function(parent) {
 		console.log(str);
 	}
 
-
 };
 
-FACETER.Terrain3D.prototype = Object.create(FACETER.BoilerPlate3D.prototype);
-FACETER.Terrain3D.prototype.constructor = FACETER.Terrain3D;
-FACETER.Terrain3D.prototype.parent = FACETER.BoilerPlate3D.prototype;
+TERRAIN.Terrain3D.prototype = Object.create(TERRAIN.BoilerPlate3D.prototype);
+TERRAIN.Terrain3D.prototype.constructor = TERRAIN.Terrain3D;
+TERRAIN.Terrain3D.prototype.parent = TERRAIN.BoilerPlate3D.prototype;
