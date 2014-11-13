@@ -29,15 +29,15 @@ TERRAIN.Params = function(name) {
 			guiWidth: 300,
 			speed: 0.125,
 			perlinSpeed: 0.125,
-			perlinHeight: 40,
+			perlinHeight: 30,
 			perlinResolution: 0.125,
 			delay: 0.150,
-			isDebugging: true,
+			isDebugging: false,
 			saveSTL: function(){
 				scope.scope3d.convertMesh();
 			},
-			randomize: function(){
-				scope.scope3d.randomizeElements();
+			createBlankArray: function(){
+				scope.scope3d.createBlankArray();
 			},
 			orderize: function(){
 				scope.scope3d.orderizeElements();
@@ -57,7 +57,6 @@ TERRAIN.Params = function(name) {
 			return false;
 		};
 
-
 		var f1 = this.gui.addFolder('GLOBAL');
 		var f2 = this.gui.addFolder('PERLIN');
 
@@ -69,6 +68,7 @@ TERRAIN.Params = function(name) {
 		TERRAIN.Sliders.perlinResolution = f2.add(TERRAIN.Params, 'perlinResolution', 0.0, 0.4).step(0.0005).name('resolution');
 
 		this.gui.add(TERRAIN.Params, 'saveSTL').name('saveSTL');
+		this.gui.add(TERRAIN.Params, 'createBlankArray').name('createBlankArray');
 
 		TERRAIN.Sliders.speed.onChange(function(value) { TERRAIN.Params.updateValues(); });
 

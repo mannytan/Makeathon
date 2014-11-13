@@ -33,6 +33,24 @@ TERRAIN.BoilerPlate3D = function(name) {
 	this.sideFront = null;
 	this.sideBack = null;
 
+	this.sideBox = null;
+
+	this.createBlankArray = function() {
+		var str = "";
+		str = str.concat("this.zHeight = [\n");
+
+		for (var i = 0; i<this.totalYIncrements; i++){
+			str = str.concat("\t");
+			for (var j = 0; j<this.totalXIncrements; j++){
+				str = str.concat("0.0, ");
+			}
+			str = str.concat("\n");
+		}
+
+		str = str.concat("];");
+		console.log(str);
+	}
+
 	// ---------------------------------------------------------
 	// instantiation
 	// ---------------------------------------------------------
@@ -59,7 +77,7 @@ TERRAIN.BoilerPlate3D = function(name) {
 		this.base = new THREE.Object3D();
 		this.scene.add(this.base);
 
-		this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 3000 );
+		this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 750 );
 		this.camera.position.x = 000;
 		this.camera.position.y = 000;
 		this.camera.position.z = 300;
@@ -98,16 +116,16 @@ TERRAIN.BoilerPlate3D = function(name) {
 		this.traceFunction("createLights");
 		// this.scene.add( new THREE.AmbientLight( 0xCCCCCC ) );
 
-		// var light	= new THREE.AmbientLight(  0x000000 );
-		// this.scene.add( light );
+		var light	= new THREE.AmbientLight(  0x000000 );
+		this.scene.add( light );
 
 		this.light	= new THREE.DirectionalLight(  0xffffff );
-		this.light.position.set( 0.75, 0.75, 1.0 ).normalize();
+		this.light.position.set( 0.25, 0.25, 1.0 ).normalize();
 		this.scene.add( this.light );
 
-		// var light	= new THREE.PointLight(  0xffffff );
-		// light.position.set( 0,0,1 ).normalize();
-		// this.scene.add( light );
+		this.light	= new THREE.DirectionalLight(  0xffffff );
+		this.light.position.set( -0.25, -0.25, -2.0 ).normalize();
+		this.scene.add( this.light );
 
 		return this;
 	};
@@ -160,22 +178,72 @@ TERRAIN.BoilerPlate3D = function(name) {
 		var material;
 		var geometry;
 
-		this.scene.remove(this.sideFront);
+		// TOP
+		// material = new THREE.MeshPhongMaterial({
+		// 		transparent: true,
+		// 		opacity: 0.25,
+		// 		ambient: 0xFF6600, 
+		// 	color: 0xFF6600, 
+		// 	shading:THREE.FlatShading,
+		// 	vertexColors:THREE.FaceColors,
+		// 	side:THREE.FrontSide,
+		// 	wireframe:false,
+		// });
+
+
+
+
+
+
 		material = new THREE.MeshPhongMaterial({
-			color:0xFF0000,
+ 			ambient: 0xFF6600, 
+			color: 0xFF6600, 
 			shading:THREE.FlatShading,
-			vertexColors:THREE.FaceColors
+			vertexColors:THREE.FaceColors,
+			side:THREE.FrontSide,
+			wireframe:false,
 		});
-		// material = new THREE.MeshNormalMaterial();
 
-		material.side = THREE.sideFront;
-		// material.shading = THREE.FlatShading;
-		material.wireframe = false;
-		geometry = new THREE.PlaneGeometry( 300, 300, this.totalXIncrements, this.totalYIncrements );
+
+
+
+		this.scene.remove(this.sideTop);
+		geometry = new THREE.PlaneGeometry( this.blockWidth, this.blockDepth, this.totalXIncrements, this.totalYIncrements );
+		this.sideTop = new THREE.Mesh( geometry, material );
+		this.scene.add( this.sideTop );
+
+		this.scene.remove(this.sideBottom);
+		geometry = new THREE.PlaneGeometry( this.blockWidth, this.blockDepth, this.totalXIncrements, this.totalYIncrements );
+		this.sideBottom = new THREE.Mesh( geometry, material );
+		this.scene.add( this.sideBottom );
+
+
+		this.scene.remove(this.sideFront);
+		geometry = new THREE.PlaneGeometry( 200, 10, this.totalXIncrements, 1 );
 		this.sideFront = new THREE.Mesh( geometry, material );
-		this.sideFront.receiveShadow = true;
-
 		this.scene.add( this.sideFront );
+
+
+		this.scene.remove(this.sideBack);
+		geometry = new THREE.PlaneGeometry( 200, 10, this.totalXIncrements, 1 );
+		this.sideBack = new THREE.Mesh( geometry, material );
+		this.scene.add( this.sideBack );
+
+
+		this.scene.remove(this.sideLeft);
+		geometry = new THREE.PlaneGeometry( 10, 200, this.totalYIncrements, 1 );
+		this.sideLeft = new THREE.Mesh( geometry, material );
+		this.scene.add( this.sideLeft );
+
+
+		this.scene.remove(this.sideRight);
+		geometry = new THREE.PlaneGeometry( 10, 200, this.totalYIncrements, 1 );
+		this.sideRight = new THREE.Mesh( geometry, material );
+		this.scene.add( this.sideRight );
+
+		
+		this.sideBox = [ this.sideBottom, this.sideTop, this.sideLeft, this.sideRight, this.sideFront, this.sideBack ];
+
 
 
 		return this;
@@ -205,85 +273,184 @@ TERRAIN.BoilerPlate3D = function(name) {
 	};
 
 	this.parsePrimaryElements = function() {
-
-		this.createPrimaryElements();
 		
 		var i;
 		var total;
-
-		total = this.sideFront.geometry.vertices.length;
+		var x, y, z;
+		var id;
+		var seed;
 
 		var totalX = this.totalXIncrements+1;
 		var totalY = this.totalYIncrements+1;
 
-		var x,y;
 		var speed = this.count * 0.05;
 		var perlinHeight = TERRAIN.Params.perlinHeight;
 		var perlinResolution = TERRAIN.Params.perlinResolution;
 
+		total = this.sideTop.geometry.vertices.length;
 		for(i = 0; i < total; i++) {
 			y = parseInt(i/totalX);
 			x = i%totalX;
-			this.sideFront.geometry.vertices[i].z = this.perlin.noise((x*perlinResolution+speed),(y*perlinResolution+speed));
-			this.sideFront.geometry.vertices[i].z *= perlinHeight;
+			z = this.perlin.noise((x*(perlinResolution) +speed),(y*(perlinResolution)+speed));
+			z *= perlinHeight;
+			z += perlinHeight;
+			z += this.blockHeight;
+			this.sideTop.geometry.vertices[i].z = z;
 		}
 
-		this.sideFront.geometry.computeVertexNormals();
-		this.sideFront.geometry.computeFaceNormals();
-		// this.sideFront.geometry.dynamic = true;
+		// ------------------------------------------------------------------
 
-		this.sideFront.geometry.verticesNeedUpdate = true;
-		this.sideFront.geometry.tangentsNeedUpdate = true;
-		this.sideFront.geometry.colorsNeedUpdate = true;
-		this.sideFront.geometry.elementsNeedUpdate = true;
-	
+		total = this.sideBottom.geometry.vertices.length;
+		for(i = 0; i < total; i++) {
+			y = parseInt(i/totalX);
+			x = i%totalX;
+			z = 0;
+
+			y = parseInt(i/totalX);
+			x = i%totalX;
+			z = this.perlin.noise((x*(perlinResolution) +speed),(y*(perlinResolution)+speed));
+			z *= perlinHeight;
+			z -= perlinHeight;
+
+			this.sideBottom.geometry.vertices[i].x = x/(totalX-1)*this.blockWidth-this.blockWidth*0.5;
+			this.sideBottom.geometry.vertices[i].y = y/(totalY-1)*this.blockDepth-this.blockDepth*0.5;
+			this.sideBottom.geometry.vertices[i].z = z;
+		}
+
+		// ------------------------------------------------------------------
+		// FRONT
+		// ------------------------------------------------------------------
+
+		total = totalX;
+		for(i = 0; i < total; i++) {
+
+			// top 
+			id = i
+			seed = (totalY-1)*(totalX) + i; 
+			this.sideFront.geometry.vertices[id].x = this.sideTop.geometry.vertices[seed].x;
+			this.sideFront.geometry.vertices[id].y = this.sideTop.geometry.vertices[seed].y;
+			this.sideFront.geometry.vertices[id].z = this.sideTop.geometry.vertices[seed].z;
+
+			// bottom
+			id = i+totalX;
+			seed = i; 
+			this.sideFront.geometry.vertices[id].x = this.sideBottom.geometry.vertices[seed].x;
+			this.sideFront.geometry.vertices[id].y = this.sideBottom.geometry.vertices[seed].y;
+			this.sideFront.geometry.vertices[id].z = this.sideBottom.geometry.vertices[seed].z;
+		}
+
+		// ------------------------------------------------------------------
+		// BACK
+		// ------------------------------------------------------------------
+
+		total = totalX;
+		for(i = 0; i < total; i++) {
+
+			// top 
+			id = i
+			seed = totalX - 1 - i; 
+			this.sideBack.geometry.vertices[id].x = this.sideTop.geometry.vertices[seed].x;
+			this.sideBack.geometry.vertices[id].y = this.sideTop.geometry.vertices[seed].y;
+			this.sideBack.geometry.vertices[id].z = this.sideTop.geometry.vertices[seed].z;
+
+			// bottom
+			id = i+totalX;
+			seed = (totalY)*(totalX) - 1 - i;
+			this.sideBack.geometry.vertices[id].x = this.sideBottom.geometry.vertices[seed].x;
+			this.sideBack.geometry.vertices[id].y = this.sideBottom.geometry.vertices[seed].y;
+			this.sideBack.geometry.vertices[id].z = this.sideBottom.geometry.vertices[seed].z;
+		}
 
 
+		// ------------------------------------------------------------------
+		// LEFT
+		// ------------------------------------------------------------------
+		total = totalY;
+		for(i = 0; i < total; i++) {
+
+			y = parseInt(i/totalX);
+			x = i%totalX;
+
+			// top 
+			id = i
+			seed = (totalX)*i; 
+			this.sideLeft.geometry.vertices[id].x = this.sideTop.geometry.vertices[seed].x;
+			this.sideLeft.geometry.vertices[id].y = this.sideTop.geometry.vertices[seed].y;
+			this.sideLeft.geometry.vertices[id].z = this.sideTop.geometry.vertices[seed].z;
+
+			// bottom 
+			id = i+totalY
+			seed = (totalX)*(total-i) - totalX; 
+			this.sideLeft.geometry.vertices[id].x = this.sideBottom.geometry.vertices[seed].x;
+			this.sideLeft.geometry.vertices[id].y = this.sideBottom.geometry.vertices[seed].y;
+			this.sideLeft.geometry.vertices[id].z = this.sideBottom.geometry.vertices[seed].z;
+
+		}
+
+		// ------------------------------------------------------------------
+		// RIGHT
+		// ------------------------------------------------------------------
+		total = totalY;
+		for(i = 0; i < total; i++) {
+
+			y = parseInt(i/totalX);
+			x = i%totalX;
+
+			// top 
+			id = i
+			seed = (totalX)*(totalY-i-1) + totalX - 1; 
+
+			this.sideRight.geometry.vertices[id].x = this.sideTop.geometry.vertices[seed].x;
+			this.sideRight.geometry.vertices[id].y = this.sideTop.geometry.vertices[seed].y;
+			this.sideRight.geometry.vertices[id].z = this.sideTop.geometry.vertices[seed].z;
+
+			// bottom 
+			id = i+totalY
+			seed = (totalX)*( i+1 ) - 1; 
+			this.sideRight.geometry.vertices[id].x = this.sideBottom.geometry.vertices[seed].x;
+			this.sideRight.geometry.vertices[id].y = this.sideBottom.geometry.vertices[seed].y;
+			this.sideRight.geometry.vertices[id].z = this.sideBottom.geometry.vertices[seed].z;
+
+		}
+
+
+
+		total = this.sideBox.length;
+		for(i = 0; i < total; i++) {
+			this.sideBox[i].geometry.computeVertexNormals();
+			this.sideBox[i].geometry.computeFaceNormals();
+			this.sideBox[i].geometry.normalsNeedUpdate = true;
+			this.sideBox[i].geometry.verticesNeedUpdate = true;
+		}
+
+
+
+
+
+
+
+		// debugger
 		if(this.wHelper) { this.scene.remove(this.wHelper) };
 		if(this.aHelper) { this.scene.remove(this.aHelper) };
 
 		if(TERRAIN.Params.isDebugging) {
 			// helpers
-			this.wHelper = new THREE.WireframeHelper( this.sideFront );
+			this.wHelper = new THREE.WireframeHelper( this.sideTop );
 			this.scene.add( this.wHelper );
 
-			this.aHelper = new THREE.FaceNormalsHelper( this.sideFront,20);
+			this.aHelper = new THREE.FaceNormalsHelper( this.sideTop,20);
 			this.scene.add( this.aHelper );
 		}
-
+		
 
 	};
 
-	this.computeNormals = function() {
-		// this.traceFunction("computeNormals");
-		var i;
-		var total = this.totalFacets;
-
-		// for ( i = 0; i < total; i ++ ) {
-		// 	this.facets[i].geometry.computeFaceNormals(); 
-		// 	this.facets[i].geometry.computeVertexNormals(); 
-		// }
-	};
 	// ---------------------------------------------------------
 	// draw elements
 	// ---------------------------------------------------------
 
 	this.draw = function() {
 		// this.traceFunction("draw");
-
-		/*
-		// update particles
-		this.particles.geometry.verticesNeedUpdate = true;
-		this.particles.geometry.elementsNeedUpdate = true;
-		this.particles.geometry.dynamic = true;
-
-		var total = this.totalFacets;
-		for(i = 0; i < total; i++) {
-			this.cachedFacets[i].geometry.verticesNeedUpdate = true;
-			this.facets[i].geometry.verticesNeedUpdate = true;
-			this.facetWires[i].geometry.verticesNeedUpdate = true;
-		}
-		*/
 
 		this.controls.update();
 		this.renderer.render( this.scene , this.camera );
