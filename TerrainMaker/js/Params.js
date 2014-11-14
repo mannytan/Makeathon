@@ -28,8 +28,9 @@ TERRAIN.Params = function(name) {
 			orbitSpeed: 0.0000,
 			guiWidth: 300,
 			speed: 0.125,
+			boxHeight: 30,
+			modulusIncrement: 1,
 			perlinSpeed: 0.0,
-			perlinHeight: 30,
 			perlinResolution: 0.125,
 			delay: 0.150,
 			isDebugging: false,
@@ -59,13 +60,18 @@ TERRAIN.Params = function(name) {
 
 		var f1 = this.gui.addFolder('GLOBAL');
 		var f2 = this.gui.addFolder('PERLIN');
+		var f3 = this.gui.addFolder('MODULUS');
 
 		TERRAIN.Sliders.speed = f1.add(TERRAIN.Params, 'speed', -.2, .2).step(0.0005).name('speed');
 		TERRAIN.Sliders.speed = f1.add(TERRAIN.Params, 'isDebugging').name('debug');
 
+		TERRAIN.Sliders.boxHeight = f1.add(TERRAIN.Params, 'boxHeight', 0.0, 100.0).step(0.0005).name('boxHeight');
+
 		TERRAIN.Sliders.perlinSpeed = f2.add(TERRAIN.Params, 'perlinSpeed', -.4, .4).step(0.0005).name('speed');
-		TERRAIN.Sliders.perlinHeight = f2.add(TERRAIN.Params, 'perlinHeight', 0.0, 100.0).step(0.0005).name('height');
 		TERRAIN.Sliders.perlinResolution = f2.add(TERRAIN.Params, 'perlinResolution', 0.0, 0.4).step(0.0005).name('resolution');
+
+		TERRAIN.Sliders.modulusIncrement = f3.add(TERRAIN.Params, 'modulusIncrement', 0, 10).step(1).name('increment');
+
 
 		this.gui.add(TERRAIN.Params, 'saveSTL').name('saveSTL');
 		this.gui.add(TERRAIN.Params, 'createBlankArray').name('createBlankArray');
@@ -74,6 +80,7 @@ TERRAIN.Params = function(name) {
 
 		f1.open();
 		f2.open();
+		f3.open();
 
 
 		this.guiContainer = document.getElementById('guiContainer');

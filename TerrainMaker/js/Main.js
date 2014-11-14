@@ -63,8 +63,9 @@ TERRAIN.Main = function(name) {
 
 	this.update = function() {
 
-		this.terrain3D.parse();
-		this.terrain3D.draw();
+		this.terrain3D.update();
+		// this.terrain3D.parse();
+		// this.terrain3D.draw();
 		return this;
 	};
 

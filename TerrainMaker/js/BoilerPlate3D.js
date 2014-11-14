@@ -57,7 +57,6 @@ TERRAIN.BoilerPlate3D = function(name) {
 	this.init = function() {
 		this.traceFunction("this");
 		// this.perlin = new ClassicalNoise();
-		this.perlin = new SimplexNoise();
 		this.mouse = new THREE.Vector2();
 		this.offset = new THREE.Vector3();
 		this.count = 0;
@@ -188,40 +187,37 @@ TERRAIN.BoilerPlate3D = function(name) {
 			wireframe:false,
 		});
 
-
-
-
 		this.scene.remove(this.sideTop);
-		geometry = new THREE.PlaneGeometry( this.blockWidth, this.blockDepth, this.totalXIncrements, this.totalZIncrements );
+		geometry = new THREE.PlaneGeometry( this.blockWidth, this.blockDepth, this.totalXIncrements-1, this.totalZIncrements-1 );
 		this.sideTop = new THREE.Mesh( geometry, material );
 		this.scene.add( this.sideTop );
 
 		this.scene.remove(this.sideBottom);
-		geometry = new THREE.PlaneGeometry( this.blockWidth, this.blockDepth, this.totalXIncrements, this.totalZIncrements );
+		geometry = new THREE.PlaneGeometry( this.blockWidth, this.blockDepth, this.totalXIncrements-1, this.totalZIncrements-1 );
 		this.sideBottom = new THREE.Mesh( geometry, material );
 		this.scene.add( this.sideBottom );
 
 
 		this.scene.remove(this.sideFront);
-		geometry = new THREE.PlaneGeometry( 200, 10, this.totalXIncrements, 1 );
+		geometry = new THREE.PlaneGeometry( 200, 10, this.totalXIncrements-1, 1 );
 		this.sideFront = new THREE.Mesh( geometry, material );
 		this.scene.add( this.sideFront );
 
 
 		this.scene.remove(this.sideBack);
-		geometry = new THREE.PlaneGeometry( 200, 10, this.totalXIncrements, 1 );
+		geometry = new THREE.PlaneGeometry( 200, 10, this.totalXIncrements-1, 1 );
 		this.sideBack = new THREE.Mesh( geometry, material );
 		this.scene.add( this.sideBack );
 
 
 		this.scene.remove(this.sideLeft);
-		geometry = new THREE.PlaneGeometry( 10, 200, this.totalZIncrements, 1 );
+		geometry = new THREE.PlaneGeometry( 10, 200, this.totalZIncrements-1, 1 );
 		this.sideLeft = new THREE.Mesh( geometry, material );
 		this.scene.add( this.sideLeft );
 
 
 		this.scene.remove(this.sideRight);
-		geometry = new THREE.PlaneGeometry( 10, 200, this.totalZIncrements, 1 );
+		geometry = new THREE.PlaneGeometry( 10, 200, this.totalZIncrements-1, 1 );
 		this.sideRight = new THREE.Mesh( geometry, material );
 		this.scene.add( this.sideRight );
 
@@ -235,6 +231,14 @@ TERRAIN.BoilerPlate3D = function(name) {
 	// ---------------------------------------------------------
 	// parse elements
 	// ---------------------------------------------------------
+
+	this.update = function() {
+
+		this.parse();
+		this.draw();
+
+		return this;
+	};
 
 	this.parse = function() {
 
@@ -254,23 +258,23 @@ TERRAIN.BoilerPlate3D = function(name) {
 		var id;
 		var seed;
 
-		var totalX = this.totalXIncrements+1;
-		var totalZ = this.totalZIncrements+1;
+		var totalX = this.totalXIncrements;
+		var totalZ = this.totalZIncrements;
 
 		var speed = this.count * 0.05;
-		var perlinHeight = TERRAIN.Params.perlinHeight;
-		var perlinResolution = TERRAIN.Params.perlinResolution;
+		var boxHeight = TERRAIN.Params.boxHeight;
+		// var perlinResolution = TERRAIN.Params.perlinResolution;
 
 		total = this.sideTop.geometry.vertices.length;
 		for(i = 0; i < total; i++) {
 			z = parseInt(i/totalX);
 			x = i%totalX;
 
-			y = this.perlin.noise((x*(perlinResolution) +speed),(z*(perlinResolution)+speed));
-			y *= perlinHeight;
-			y += perlinHeight;
-			y += this.blockHeight;
 
+			y = this.yHeight[i];
+			y *= boxHeight;
+			// y += boxHeight;
+			y += this.blockHeight;
 			this.sideTop.geometry.vertices[i].x = x/(totalX-1)*this.blockWidth-this.blockWidth*0.5;
 			this.sideTop.geometry.vertices[i].z = z/(totalZ-1)*this.blockDepth-this.blockDepth*0.5;
 			this.sideTop.geometry.vertices[i].y = y;
@@ -285,8 +289,8 @@ TERRAIN.BoilerPlate3D = function(name) {
 			y = 0;
 
 			// z = this.perlin.noise((x*(perlinResolution) +speed),(y*(perlinResolution)+speed));
-			// z *= perlinHeight;
-			// z -= perlinHeight;
+			// z *= boxHeight;
+			// z -= boxHeight;
 
 			this.sideBottom.geometry.vertices[i].x = x/(totalX-1)*this.blockWidth-this.blockWidth*0.5;
 			this.sideBottom.geometry.vertices[i].z = (1-z/(totalZ-1))*this.blockDepth-this.blockDepth*0.5;
