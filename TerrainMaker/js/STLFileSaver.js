@@ -11,56 +11,109 @@ Saving the file out of the browser is done using FileSaver.js
 find that here: https://github.com/eligrey/FileSaver.js
 */
 
-function stringifyVertex(vec){
-  var x = ((vec.x*10000) | 0) / 10000;
-  var y = ((vec.y*10000) | 0) / 10000;
-  var z = ((vec.z*10000) | 0) / 10000;
-  return (x)+" "+ (-z)+" "+(y);
+function stringifyVertex(vec) {
+  var x = ((vec.x * 10000) | 0) / 10000;
+  var y = ((vec.z * 10000) | 0) / 10000;
+  var z = ((vec.y * 10000) | 0) / 10000;
+  return (x) + " " + (-y) + " " + (z);
 }
 
 // Use FileSaver.js 'saveAs' function to save the string
-function saveSTL( geometry, name ){  
-  var stlString = generateSTL( geometry );
-  
-  var blob = new Blob([stlString], {type: 'text/plain'});
-  
+
+function saveSTL(geometry, name) {
+  var stlString = generateSTL(geometry);
+
+  var blob = new Blob([stlString], {
+    type: 'text/plain'
+  });
+
   saveAs(blob, name + '.stl');
-  
+
 }
 
-function generateSTLFromArray(geometryList){
+function generateSTLFromMesh(geometryList, stl) {
+  trace("generateSTLFromMesh");
   var geometry, vertices, tris;
 
-  var stl = "solid\n";
+  for (var j = 0; j < geometryList.length; j++) {
+    geometry = geometryList[j].geometry;
+    vertices = geometry.vertices;
+    tris = geometry.faces;
 
-  for(var j = 0; j<geometryList.length; j++){
-    geometry  = geometryList[j].geometry;
-    vertices  = geometry.vertices;
-    triangles = geometry.faces;
-  
-    for(var i = 0; i<generateSTLFromArray.length; i++){
-      stl += ("facet normal "+stringifyVertex( triangles[i].normal )+" \n");
+    for (var i = 0; i < tris.length; i++) {
+      stl += ("facet normal " + stringifyVertex(tris[i].normal) + " \n");
       stl += ("outer loop \n");
-      stl += ("vertex "+stringifyVertex( vertices[ triangles[i].a ])+" \n");
-      stl += ("vertex "+stringifyVertex( vertices[ triangles[i].b ])+" \n");
-      stl += ("vertex "+stringifyVertex( vertices[ triangles[i].c ])+" \n");
+      stl += ("vertex " + stringifyVertex(vertices[tris[i].a]) + " \n");
+      stl += ("vertex " + stringifyVertex(vertices[tris[i].b]) + " \n");
+      stl += ("vertex " + stringifyVertex(vertices[tris[i].c]) + " \n");
       stl += ("endloop \n");
       stl += ("endfacet \n");
-    
+
     }
   }
-
-  stl += ("endsolid");
 
   return stl;
 }
 
-// Use FileSaver.js 'saveAs' function to save the string
-function saveSTLFromArray( geometryList, name ){  
-  var stlString = generateSTLFromArray( geometryList );
-  
-  var blob = new Blob([stlString], {type: 'text/plain'});
-  
+function generateSTLFromPlane(geometryList, stl) {
+  var geometry, vertices, tris;
+
+  for (var j = 0; j < geometryList.length; j++) {
+    geometry = geometryList[j].geometry;
+    vertices = geometry.vertices;
+    tris = geometry.faces;
+
+    for (var i = 0; i < tris.length; i++) {
+      stl += ("facet normal " + stringifyVertex(tris[i].normal) + " \n");
+      stl += ("outer loop \n");
+      stl += ("vertex " + stringifyVertex(vertices[tris[i].a]) + " \n");
+      stl += ("vertex " + stringifyVertex(vertices[tris[i].b]) + " \n");
+      stl += ("vertex " + stringifyVertex(vertices[tris[i].c]) + " \n");
+      stl += ("endloop \n");
+      stl += ("endfacet \n");
+
+      stl += ("facet normal " + stringifyVertex(tris[i].normal) + " \n");
+      stl += ("outer loop \n");
+      stl += ("vertex " + stringifyVertex(vertices[tris[i].c]) + " \n");
+      stl += ("vertex " + stringifyVertex(vertices[tris[i].d]) + " \n");
+      stl += ("vertex " + stringifyVertex(vertices[tris[i].a]) + " \n");
+      stl += ("endloop \n");
+      stl += ("endfacet \n");
+
+    }
+  }
+
+  return stl;
+}
+
+function saveSTLFromCustom(planeGeometryList, name) {
+  trace("saveSTLFromCustom");
+
+  var stlString = "";
+  stlString = stlString.concat("solid\n");
+  stlString = stlString.concat(generateSTLFromPlane(planeGeometryList, ""));
+  stlString = stlString.concat("endsolid");
+
+  var blob = new Blob([stlString], {
+    type: 'text/plain'
+  });
+
   saveAs(blob, name + '.stl');
-  
+
+}
+
+function saveSTLFromCustom(facetGeometryList, name) {
+  trace("saveSTLFromCustom");
+
+  var stlString = "";
+  stlString = stlString.concat("solid\n");
+  stlString = stlString.concat(generateSTLFromMesh(facetGeometryList, ""));
+  stlString = stlString.concat("endsolid");
+
+  var blob = new Blob([stlString], {
+    type: 'text/plain'
+  });
+
+  saveAs(blob, name + '.stl');
+
 }

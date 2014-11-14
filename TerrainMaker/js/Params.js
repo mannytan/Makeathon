@@ -64,7 +64,7 @@ TERRAIN.Params = function(name) {
 		TERRAIN.Sliders.speed = f1.add(TERRAIN.Params, 'isDebugging').name('debug');
 
 		TERRAIN.Sliders.perlinSpeed = f2.add(TERRAIN.Params, 'perlinSpeed', -.4, .4).step(0.0005).name('speed');
-		TERRAIN.Sliders.perlinHeight = f2.add(TERRAIN.Params, 'perlinHeight', 0.0, 200.0).step(0.0005).name('height');
+		TERRAIN.Sliders.perlinHeight = f2.add(TERRAIN.Params, 'perlinHeight', 0.0, 100.0).step(0.0005).name('height');
 		TERRAIN.Sliders.perlinResolution = f2.add(TERRAIN.Params, 'perlinResolution', 0.0, 0.4).step(0.0005).name('resolution');
 
 		this.gui.add(TERRAIN.Params, 'saveSTL').name('saveSTL');

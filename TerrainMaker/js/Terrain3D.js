@@ -3,24 +3,24 @@
  * User: mannytan
  */
 
-
 TERRAIN.Terrain3D = function(parent) {
 	var scope = this;
-
     this.parent.constructor.call(this);
-    this.superInit = this.init;
 
+    this.superInit = this.init;
 	this.name = 'Terrain3D';
 
 	this.init = function() {
+
 		this.blockHeight = 2;
-		this.blockWidth = 200;
-		this.blockDepth = 200;
+		this.blockWidth = 100;
+		this.blockDepth = 100;
 
 		this.totalXIncrements = 50;
-		this.totalYIncrements = 50;
-		this.totalParticles = this.totalXIncrements * this.totalYIncrements;
-		this.zHeight = [
+		this.totalZIncrements = 50;
+		this.totalParticles = this.totalXIncrements * this.totalZIncrements;
+
+		this.yHeight = [
 			0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.0,
 			0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 			0.0, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.0,

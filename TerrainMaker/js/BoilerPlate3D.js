@@ -37,9 +37,9 @@ TERRAIN.BoilerPlate3D = function(name) {
 
 	this.createBlankArray = function() {
 		var str = "";
-		str = str.concat("this.zHeight = [\n");
+		str = str.concat("this.yHeight = [\n");
 
-		for (var i = 0; i<this.totalYIncrements; i++){
+		for (var i = 0; i<this.totalZIncrements; i++){
 			str = str.concat("\t");
 			for (var j = 0; j<this.totalXIncrements; j++){
 				str = str.concat("0.0, ");
@@ -77,10 +77,10 @@ TERRAIN.BoilerPlate3D = function(name) {
 		this.base = new THREE.Object3D();
 		this.scene.add(this.base);
 
-		this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 750 );
+		this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
 		this.camera.position.x = 000;
 		this.camera.position.y = 000;
-		this.camera.position.z = 300;
+		this.camera.position.z = 200;
 
 		this.controls = new THREE.TrackballControls( this.camera, document.getElementById('container3D'));
 		this.controls.rotateSpeed = 2.0;
@@ -178,22 +178,6 @@ TERRAIN.BoilerPlate3D = function(name) {
 		var material;
 		var geometry;
 
-		// TOP
-		// material = new THREE.MeshPhongMaterial({
-		// 		transparent: true,
-		// 		opacity: 0.25,
-		// 		ambient: 0xFF6600, 
-		// 	color: 0xFF6600, 
-		// 	shading:THREE.FlatShading,
-		// 	vertexColors:THREE.FaceColors,
-		// 	side:THREE.FrontSide,
-		// 	wireframe:false,
-		// });
-
-
-
-
-
 
 		material = new THREE.MeshPhongMaterial({
  			ambient: 0xFF6600, 
@@ -208,12 +192,12 @@ TERRAIN.BoilerPlate3D = function(name) {
 
 
 		this.scene.remove(this.sideTop);
-		geometry = new THREE.PlaneGeometry( this.blockWidth, this.blockDepth, this.totalXIncrements, this.totalYIncrements );
+		geometry = new THREE.PlaneGeometry( this.blockWidth, this.blockDepth, this.totalXIncrements, this.totalZIncrements );
 		this.sideTop = new THREE.Mesh( geometry, material );
 		this.scene.add( this.sideTop );
 
 		this.scene.remove(this.sideBottom);
-		geometry = new THREE.PlaneGeometry( this.blockWidth, this.blockDepth, this.totalXIncrements, this.totalYIncrements );
+		geometry = new THREE.PlaneGeometry( this.blockWidth, this.blockDepth, this.totalXIncrements, this.totalZIncrements );
 		this.sideBottom = new THREE.Mesh( geometry, material );
 		this.scene.add( this.sideBottom );
 
@@ -231,13 +215,13 @@ TERRAIN.BoilerPlate3D = function(name) {
 
 
 		this.scene.remove(this.sideLeft);
-		geometry = new THREE.PlaneGeometry( 10, 200, this.totalYIncrements, 1 );
+		geometry = new THREE.PlaneGeometry( 10, 200, this.totalZIncrements, 1 );
 		this.sideLeft = new THREE.Mesh( geometry, material );
 		this.scene.add( this.sideLeft );
 
 
 		this.scene.remove(this.sideRight);
-		geometry = new THREE.PlaneGeometry( 10, 200, this.totalYIncrements, 1 );
+		geometry = new THREE.PlaneGeometry( 10, 200, this.totalZIncrements, 1 );
 		this.sideRight = new THREE.Mesh( geometry, material );
 		this.scene.add( this.sideRight );
 
@@ -246,15 +230,6 @@ TERRAIN.BoilerPlate3D = function(name) {
 
 
 
-		return this;
-	};
-
-	this.removeFacets = function(){
-		for(i = 0; i < this.totalFacets; i++) {
-			this.base.remove(this.cachedFacets[i]);
-			this.base.remove(this.facets[i]);
-			this.base.remove(this.facetWires[i]);
-		}
 		return this;
 	};
 
@@ -281,7 +256,7 @@ TERRAIN.BoilerPlate3D = function(name) {
 		var seed;
 
 		var totalX = this.totalXIncrements+1;
-		var totalY = this.totalYIncrements+1;
+		var totalZ = this.totalZIncrements+1;
 
 		var speed = this.count * 0.05;
 		var perlinHeight = TERRAIN.Params.perlinHeight;
@@ -289,32 +264,34 @@ TERRAIN.BoilerPlate3D = function(name) {
 
 		total = this.sideTop.geometry.vertices.length;
 		for(i = 0; i < total; i++) {
-			y = parseInt(i/totalX);
+			z = parseInt(i/totalX);
 			x = i%totalX;
-			z = this.perlin.noise((x*(perlinResolution) +speed),(y*(perlinResolution)+speed));
-			z *= perlinHeight;
-			z += perlinHeight;
-			z += this.blockHeight;
-			this.sideTop.geometry.vertices[i].z = z;
+
+			y = this.perlin.noise((x*(perlinResolution) +speed),(z*(perlinResolution)+speed));
+			y *= perlinHeight;
+			y += perlinHeight;
+			y += this.blockHeight;
+
+			this.sideTop.geometry.vertices[i].x = x/(totalX-1)*this.blockWidth-this.blockWidth*0.5;
+			this.sideTop.geometry.vertices[i].z = z/(totalZ-1)*this.blockDepth-this.blockDepth*0.5;
+			this.sideTop.geometry.vertices[i].y = y;
 		}
 
 		// ------------------------------------------------------------------
 
 		total = this.sideBottom.geometry.vertices.length;
 		for(i = 0; i < total; i++) {
-			y = parseInt(i/totalX);
+			z = parseInt(i/totalX);
 			x = i%totalX;
-			z = 0;
+			y = 0;
 
-			y = parseInt(i/totalX);
-			x = i%totalX;
-			z = this.perlin.noise((x*(perlinResolution) +speed),(y*(perlinResolution)+speed));
-			z *= perlinHeight;
-			z -= perlinHeight;
+			// z = this.perlin.noise((x*(perlinResolution) +speed),(y*(perlinResolution)+speed));
+			// z *= perlinHeight;
+			// z -= perlinHeight;
 
 			this.sideBottom.geometry.vertices[i].x = x/(totalX-1)*this.blockWidth-this.blockWidth*0.5;
-			this.sideBottom.geometry.vertices[i].y = y/(totalY-1)*this.blockDepth-this.blockDepth*0.5;
-			this.sideBottom.geometry.vertices[i].z = z;
+			this.sideBottom.geometry.vertices[i].z = (1-z/(totalZ-1))*this.blockDepth-this.blockDepth*0.5;
+			this.sideBottom.geometry.vertices[i].y = y;
 		}
 
 		// ------------------------------------------------------------------
@@ -326,7 +303,7 @@ TERRAIN.BoilerPlate3D = function(name) {
 
 			// top 
 			id = i
-			seed = (totalY-1)*(totalX) + i; 
+			seed = (totalZ-1)*(totalX) + i; 
 			this.sideFront.geometry.vertices[id].x = this.sideTop.geometry.vertices[seed].x;
 			this.sideFront.geometry.vertices[id].y = this.sideTop.geometry.vertices[seed].y;
 			this.sideFront.geometry.vertices[id].z = this.sideTop.geometry.vertices[seed].z;
@@ -355,7 +332,7 @@ TERRAIN.BoilerPlate3D = function(name) {
 
 			// bottom
 			id = i+totalX;
-			seed = (totalY)*(totalX) - 1 - i;
+			seed = (totalZ)*(totalX) - 1 - i;
 			this.sideBack.geometry.vertices[id].x = this.sideBottom.geometry.vertices[seed].x;
 			this.sideBack.geometry.vertices[id].y = this.sideBottom.geometry.vertices[seed].y;
 			this.sideBack.geometry.vertices[id].z = this.sideBottom.geometry.vertices[seed].z;
@@ -365,10 +342,10 @@ TERRAIN.BoilerPlate3D = function(name) {
 		// ------------------------------------------------------------------
 		// LEFT
 		// ------------------------------------------------------------------
-		total = totalY;
+		total = totalZ;
 		for(i = 0; i < total; i++) {
 
-			y = parseInt(i/totalX);
+			z = parseInt(i/totalX);
 			x = i%totalX;
 
 			// top 
@@ -379,7 +356,7 @@ TERRAIN.BoilerPlate3D = function(name) {
 			this.sideLeft.geometry.vertices[id].z = this.sideTop.geometry.vertices[seed].z;
 
 			// bottom 
-			id = i+totalY
+			id = i+totalZ
 			seed = (totalX)*(total-i) - totalX; 
 			this.sideLeft.geometry.vertices[id].x = this.sideBottom.geometry.vertices[seed].x;
 			this.sideLeft.geometry.vertices[id].y = this.sideBottom.geometry.vertices[seed].y;
@@ -390,22 +367,22 @@ TERRAIN.BoilerPlate3D = function(name) {
 		// ------------------------------------------------------------------
 		// RIGHT
 		// ------------------------------------------------------------------
-		total = totalY;
+		total = totalZ;
 		for(i = 0; i < total; i++) {
 
-			y = parseInt(i/totalX);
+			z = parseInt(i/totalX);
 			x = i%totalX;
 
 			// top 
 			id = i
-			seed = (totalX)*(totalY-i-1) + totalX - 1; 
+			seed = (totalX)*(totalZ-i-1) + totalX - 1; 
 
 			this.sideRight.geometry.vertices[id].x = this.sideTop.geometry.vertices[seed].x;
 			this.sideRight.geometry.vertices[id].y = this.sideTop.geometry.vertices[seed].y;
 			this.sideRight.geometry.vertices[id].z = this.sideTop.geometry.vertices[seed].z;
 
 			// bottom 
-			id = i+totalY
+			id = i+totalZ
 			seed = (totalX)*( i+1 ) - 1; 
 			this.sideRight.geometry.vertices[id].x = this.sideBottom.geometry.vertices[seed].x;
 			this.sideRight.geometry.vertices[id].y = this.sideBottom.geometry.vertices[seed].y;
@@ -487,7 +464,7 @@ TERRAIN.BoilerPlate3D = function(name) {
 
 		// var geometry = this.customPlanes[1].geometry;
 		// saveSTL(geometry,"test_01");
-		saveSTLFromArray(this.facets,"facets");
+		saveSTLFromCustom(this.sideBox,"sideBox");
 	};
 
 	this.enableTrackBall = function() {
