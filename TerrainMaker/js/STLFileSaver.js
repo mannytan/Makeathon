@@ -15,7 +15,7 @@ function stringifyVertex(vec) {
   var x = ((vec.x * 10000) | 0) / 10000;
   var y = ((vec.z * 10000) | 0) / 10000;
   var z = ((vec.y * 10000) | 0) / 10000;
-  return (x) + " " + (-y) + " " + (z);
+  return (-x) + " " + (y) + " " + (z);
 }
 
 // Use FileSaver.js 'saveAs' function to save the string
@@ -114,6 +114,34 @@ function saveSTLFromCustom(facetGeometryList, name) {
     type: 'text/plain'
   });
 
-  saveAs(blob, name + '.stl');
+  saveAs(blob, name + "_" + displayTime() + '.stl');
 
 }
+
+
+function displayTime() {
+
+    var str = "";
+
+    var currentTime = new Date()
+    var month = currentTime.getMonth()
+    var day = currentTime.getDate()
+    var hours = currentTime.getHours()
+    var minutes = currentTime.getMinutes()
+    var seconds = currentTime.getSeconds()
+
+    month++;
+
+    if (month < 10)   { month = "0" + month }
+    if (day < 10)     { day = "0" + day }
+    if (minutes < 10)   { minutes = "0" + minutes }
+    if (seconds < 10)   { seconds = "0" + seconds }
+    // str += hours + ":" + minutes + ":" + seconds + " ";
+    str += month + "" +day + "_" + hours + "" + minutes + "_" + seconds;
+    // if(hours > 11){
+    // str += "PM"
+    // } else {
+    // str += "AM"
+    // }
+    return str;
+  }

@@ -78,9 +78,9 @@ TERRAIN.BoilerPlate3D = function(name) {
 		this.scene.add(this.base);
 
 		this.camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 1000 );
-		this.camera.position.x = 000;
-		this.camera.position.y = 000;
-		this.camera.position.z = 200;
+		this.camera.position.x = 100;
+		this.camera.position.y = 100;
+		this.camera.position.z = 100;
 
 		this.controls = new THREE.TrackballControls( this.camera, document.getElementById('container3D'));
 		this.controls.rotateSpeed = 2.0;
@@ -123,9 +123,9 @@ TERRAIN.BoilerPlate3D = function(name) {
 		this.light.position.set( 0.25, 0.25, 1.0 ).normalize();
 		this.scene.add( this.light );
 
-		this.light	= new THREE.DirectionalLight(  0xffffff );
-		this.light.position.set( -0.25, -0.25, -2.0 ).normalize();
-		this.scene.add( this.light );
+		// this.light	= new THREE.DirectionalLight(  0xffffff );
+		// this.light.position.set( -0.25, -0.25, -2.0 ).normalize();
+		// this.scene.add( this.light );
 
 		return this;
 	};
@@ -228,10 +228,9 @@ TERRAIN.BoilerPlate3D = function(name) {
 		
 		this.sideBox = [ this.sideBottom, this.sideTop, this.sideLeft, this.sideRight, this.sideFront, this.sideBack ];
 
-
-
 		return this;
 	};
+
 
 	// ---------------------------------------------------------
 	// parse elements

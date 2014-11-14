@@ -28,7 +28,7 @@ TERRAIN.Params = function(name) {
 			orbitSpeed: 0.0000,
 			guiWidth: 300,
 			speed: 0.125,
-			perlinSpeed: 0.125,
+			perlinSpeed: 0.0,
 			perlinHeight: 30,
 			perlinResolution: 0.125,
 			delay: 0.150,
