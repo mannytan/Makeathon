@@ -36,7 +36,7 @@ TERRAIN.BoilerPlate3D = function(name) {
 	this.sideBox = null;
 
 	this.createBlankArray = function() {
-		var str = "";
+		var str = "// values \"should\" be between 0.0 and 1.0\n";
 		str = str.concat("this.yHeight = [\n");
 
 		for (var i = 0; i<this.totalZIncrements; i++){
