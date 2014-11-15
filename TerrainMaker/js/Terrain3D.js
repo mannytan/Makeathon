@@ -17,8 +17,8 @@ TERRAIN.Terrain3D = function(parent) {
 		this.blockWidth = 120;
 		this.blockDepth = 100;
 
-		this.totalXIncrements = 60;
-		this.totalZIncrements = 50;
+		this.totalXIncrements = 6;
+		this.totalZIncrements = 5;
 
 		// noise
 		this.perlin = new SimplexNoise();
@@ -54,7 +54,7 @@ TERRAIN.Terrain3D = function(parent) {
 			this.yHeight[i] = y;
 		}
 		*/ 
-		
+		/*
 		// perlin
 		var perlinResolution = TERRAIN.Params.perlinResolution;
 		var speed = this.noiseCount * 0.05;
@@ -66,7 +66,7 @@ TERRAIN.Terrain3D = function(parent) {
 			y =  y*0.5 + 0.5;
 			this.yHeight[i] = y;
 		}
-		
+		*/
 	
 		this.superUpdate.call(this);
 	}
