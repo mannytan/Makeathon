@@ -13,9 +13,7 @@ TERRAIN.Terrain3D = function(parent) {
 
 	this.init = function() {
 
-		this.blockHeight = 4;
-		this.blockWidth = 120;
-		this.blockDepth = 100;
+		this.baseHeight = 4;
 		this.totalXIncrements = 6;
 		this.totalZIncrements = 5;
 
@@ -30,7 +28,8 @@ TERRAIN.Terrain3D = function(parent) {
 			0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
 			0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
 		]; 
-
+		
+		
 		// --------------------------------------------------------
 		// randomizer
 		// --------------------------------------------------------
@@ -43,16 +42,42 @@ TERRAIN.Terrain3D = function(parent) {
 			y = Math.random();
 			this.yHeight[i] = y;
 		}
+		
 
+		/*
+		// --------------------------------------------------------
+		// nyan cat
+		// --------------------------------------------------------
+		this.totalXIncrements = 42;
+		this.totalZIncrements = 20;
+		var data;
+		var ctx = document.getElementById("imageContainer").getContext("2d");
+		var img = document.getElementById("nyancat");
+		ctx.drawImage(img, 0, 0);
+
+		var total = this.totalXIncrements * this.totalZIncrements;
+		var r, g, b, quickBrightness;
+		for(i = 0; i < total; i++){
+			z = parseInt(i/this.totalXIncrements);
+			x = i%this.totalXIncrements;
+			data = ctx.getImageData(x, z, 1, 1).data;
+			r = 1 - (data[0]) / 255;
+			g = 1 - (data[1]) / 255;
+			b = 1 - (data[2]) / 255;
+			quickBrightness = (r+r+b+g+g+g)/6;
+			this.yHeight[i] = quickBrightness;
+		}
+		*/
+
+		// don't edit below this point
 		this.superInit.call(this);	
 	}
 
 	this.update = function() {
-
 		var i;
 		var x,y,z;
 		var total = this.totalXIncrements * this.totalZIncrements;
-
+		
 		/*
 		// --------------------------------------------------------
 		// randomizer
@@ -97,6 +122,7 @@ TERRAIN.Terrain3D = function(parent) {
 		}
 		*/
 
+		// don't edit below this point
 		this.superUpdate.call(this);
 	}
 };

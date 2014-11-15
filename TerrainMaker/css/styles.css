@@ -47,6 +47,15 @@ body {
 
 #container3D {
 	position: absolute;
+
+}
+
+#nyancat {
+	position: absolute;
+}
+
+#imageContainer {
+	position: absolute;
 }
 
 #guiContainer {

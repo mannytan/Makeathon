@@ -61,7 +61,7 @@ TERRAIN.BoilerPlate3D = function(name) {
 		this.offset = new THREE.Vector3();
 		this.count = 0;
 
-		this.blockHeight = 4;
+		this.baseHeight = 4;
 		this.blockWidth = 120;
 		this.blockDepth = 100;
 
@@ -267,6 +267,7 @@ TERRAIN.BoilerPlate3D = function(name) {
 		var totalZ = this.totalZIncrements;
 
 		var speed = this.count * 0.05;
+		var baseHeight = TERRAIN.Params.baseHeight;
 		var boxHeight = TERRAIN.Params.boxHeight;
 		var boxWidth = TERRAIN.Params.boxWidth;
 		var boxDepth = TERRAIN.Params.boxDepth;
@@ -281,7 +282,7 @@ TERRAIN.BoilerPlate3D = function(name) {
 			y = this.yHeight[i];
 			y *= boxHeight;
 			// y += boxHeight;
-			y += this.blockHeight;
+			y += baseHeight;
 			this.sideTop.geometry.vertices[i].x = x/(totalX-1)*boxWidth-boxWidth*0.5;
 			this.sideTop.geometry.vertices[i].z = z/(totalZ-1)*boxDepth-boxDepth*0.5;
 			this.sideTop.geometry.vertices[i].y = y;

@@ -28,6 +28,7 @@ TERRAIN.Params = function(name) {
 			orbitSpeed: 0.0000,
 			guiWidth: 300,
 			speed: 0.125,
+			baseHeight: 4,
 			boxHeight: 30,
 			boxWidth: 120,
 			boxDepth: 100,
@@ -65,6 +66,7 @@ TERRAIN.Params = function(name) {
 		var f3 = this.gui.addFolder('MODULUS');
 
 		TERRAIN.Sliders.isDebugging = f1.add(TERRAIN.Params, 'isDebugging').name('debug').listen();
+		TERRAIN.Sliders.baseHeight = f1.add(TERRAIN.Params, 'baseHeight', 0.0, 50.0).step(0.0005).name('baseHeight').listen();
 		TERRAIN.Sliders.boxHeight = f1.add(TERRAIN.Params, 'boxHeight', 0.0, 100.0).step(0.0005).name('boxHeight').listen();
 		TERRAIN.Sliders.boxWidth = f1.add(TERRAIN.Params, 'boxWidth', 0.0, 300.0).step(0.0005).name('boxWidth').listen();
 		TERRAIN.Sliders.boxDepth = f1.add(TERRAIN.Params, 'boxDepth', 0.0, 300.0).step(0.0005).name('boxDepth').listen();
@@ -75,14 +77,14 @@ TERRAIN.Params = function(name) {
 		TERRAIN.Sliders.modulusIncrement = f3.add(TERRAIN.Params, 'modulusIncrement', 0, 10).step(1).name('increment').listen();
 
 
-		this.gui.add(TERRAIN.Params, 'saveSTL').name('saveSTL');
-		this.gui.add(TERRAIN.Params, 'createBlankArray').name('createBlankArray');
+		this.gui.add(TERRAIN.Params, 'saveSTL').name('SaveSTL');
+		this.gui.add(TERRAIN.Params, 'createBlankArray').name('CreateBlankArray');
 
 		TERRAIN.Sliders.isDebugging.onChange(function(value) { TERRAIN.Params.updateValues(); });
 
 		f1.open();
-		f2.open();
-		f3.open();
+		// f2.open();
+		// f3.open();
 
 
 		this.guiContainer = document.getElementById('guiContainer');
