@@ -56,15 +56,20 @@ TERRAIN.BoilerPlate3D = function(name) {
 	// ---------------------------------------------------------
 	this.init = function() {
 		this.traceFunction("this");
-		// this.perlin = new ClassicalNoise();
+
 		this.mouse = new THREE.Vector2();
 		this.offset = new THREE.Vector3();
 		this.count = 0;
+
+		this.blockHeight = 4;
+		this.blockWidth = 120;
+		this.blockDepth = 100;
 
 		this.createEnvironment();
 		this.createLights();
 		this.createElements();
 		this.createListeners();
+
 
 		return this;
 	}
@@ -263,6 +268,8 @@ TERRAIN.BoilerPlate3D = function(name) {
 
 		var speed = this.count * 0.05;
 		var boxHeight = TERRAIN.Params.boxHeight;
+		var boxWidth = TERRAIN.Params.boxWidth;
+		var boxDepth = TERRAIN.Params.boxDepth;
 		// var perlinResolution = TERRAIN.Params.perlinResolution;
 
 		total = this.sideTop.geometry.vertices.length;
@@ -275,8 +282,8 @@ TERRAIN.BoilerPlate3D = function(name) {
 			y *= boxHeight;
 			// y += boxHeight;
 			y += this.blockHeight;
-			this.sideTop.geometry.vertices[i].x = x/(totalX-1)*this.blockWidth-this.blockWidth*0.5;
-			this.sideTop.geometry.vertices[i].z = z/(totalZ-1)*this.blockDepth-this.blockDepth*0.5;
+			this.sideTop.geometry.vertices[i].x = x/(totalX-1)*boxWidth-boxWidth*0.5;
+			this.sideTop.geometry.vertices[i].z = z/(totalZ-1)*boxDepth-boxDepth*0.5;
 			this.sideTop.geometry.vertices[i].y = y;
 		}
 
@@ -292,8 +299,8 @@ TERRAIN.BoilerPlate3D = function(name) {
 			// z *= boxHeight;
 			// z -= boxHeight;
 
-			this.sideBottom.geometry.vertices[i].x = x/(totalX-1)*this.blockWidth-this.blockWidth*0.5;
-			this.sideBottom.geometry.vertices[i].z = (1-z/(totalZ-1))*this.blockDepth-this.blockDepth*0.5;
+			this.sideBottom.geometry.vertices[i].x = x/(totalX-1)*boxWidth-boxWidth*0.5;
+			this.sideBottom.geometry.vertices[i].z = (1-z/(totalZ-1))*boxDepth-boxDepth*0.5;
 			this.sideBottom.geometry.vertices[i].y = y;
 		}
 

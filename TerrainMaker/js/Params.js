@@ -29,6 +29,8 @@ TERRAIN.Params = function(name) {
 			guiWidth: 300,
 			speed: 0.125,
 			boxHeight: 30,
+			boxWidth: 120,
+			boxDepth: 100,
 			modulusIncrement: 1,
 			perlinSpeed: 0.0,
 			perlinResolution: 0.125,
@@ -62,21 +64,21 @@ TERRAIN.Params = function(name) {
 		var f2 = this.gui.addFolder('PERLIN');
 		var f3 = this.gui.addFolder('MODULUS');
 
-		TERRAIN.Sliders.speed = f1.add(TERRAIN.Params, 'speed', -.2, .2).step(0.0005).name('speed');
-		TERRAIN.Sliders.speed = f1.add(TERRAIN.Params, 'isDebugging').name('debug');
+		TERRAIN.Sliders.isDebugging = f1.add(TERRAIN.Params, 'isDebugging').name('debug').listen();
+		TERRAIN.Sliders.boxHeight = f1.add(TERRAIN.Params, 'boxHeight', 0.0, 100.0).step(0.0005).name('boxHeight').listen();
+		TERRAIN.Sliders.boxWidth = f1.add(TERRAIN.Params, 'boxWidth', 0.0, 300.0).step(0.0005).name('boxWidth').listen();
+		TERRAIN.Sliders.boxDepth = f1.add(TERRAIN.Params, 'boxDepth', 0.0, 300.0).step(0.0005).name('boxDepth').listen();
 
-		TERRAIN.Sliders.boxHeight = f1.add(TERRAIN.Params, 'boxHeight', 0.0, 100.0).step(0.0005).name('boxHeight');
+		TERRAIN.Sliders.perlinSpeed = f2.add(TERRAIN.Params, 'perlinSpeed', -.4, .4).step(0.0005).name('speed').listen();
+		TERRAIN.Sliders.perlinResolution = f2.add(TERRAIN.Params, 'perlinResolution', 0.0, 0.4).step(0.0005).name('resolution').listen();
 
-		TERRAIN.Sliders.perlinSpeed = f2.add(TERRAIN.Params, 'perlinSpeed', -.4, .4).step(0.0005).name('speed');
-		TERRAIN.Sliders.perlinResolution = f2.add(TERRAIN.Params, 'perlinResolution', 0.0, 0.4).step(0.0005).name('resolution');
-
-		TERRAIN.Sliders.modulusIncrement = f3.add(TERRAIN.Params, 'modulusIncrement', 0, 10).step(1).name('increment');
+		TERRAIN.Sliders.modulusIncrement = f3.add(TERRAIN.Params, 'modulusIncrement', 0, 10).step(1).name('increment').listen();
 
 
 		this.gui.add(TERRAIN.Params, 'saveSTL').name('saveSTL');
 		this.gui.add(TERRAIN.Params, 'createBlankArray').name('createBlankArray');
 
-		TERRAIN.Sliders.speed.onChange(function(value) { TERRAIN.Params.updateValues(); });
+		TERRAIN.Sliders.isDebugging.onChange(function(value) { TERRAIN.Params.updateValues(); });
 
 		f1.open();
 		f2.open();
