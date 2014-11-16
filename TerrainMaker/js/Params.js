@@ -33,6 +33,7 @@ TERRAIN.Params = function(name) {
 			boxWidth: 120,
 			boxDepth: 100,
 			modulusIncrement: 1,
+			modulusRange: 1,
 			perlinSpeed: 0.0,
 			perlinResolution: 0.125,
 			delay: 0.150,
@@ -75,6 +76,7 @@ TERRAIN.Params = function(name) {
 		TERRAIN.Sliders.perlinResolution = f2.add(TERRAIN.Params, 'perlinResolution', 0.0, 0.4).step(0.0005).name('resolution').listen();
 
 		TERRAIN.Sliders.modulusIncrement = f3.add(TERRAIN.Params, 'modulusIncrement', 0, 10).step(1).name('increment').listen();
+		TERRAIN.Sliders.modulusRange = f3.add(TERRAIN.Params, 'modulusRange', 0, 5).step(1).name('range').listen();
 
 
 		this.gui.add(TERRAIN.Params, 'saveSTL').name('SaveSTL');

@@ -12,7 +12,6 @@ TERRAIN.Terrain3D = function(parent) {
 
 	this.init = function() {
 
-		this.baseHeight = 4;
 		this.totalXIncrements = 6;
 		this.totalZIncrements = 5;
 
@@ -27,7 +26,7 @@ TERRAIN.Terrain3D = function(parent) {
 			0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
 			0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
 		]; 
-
+		
 		/*
 		// --------------------------------------------------------
 		// randomizer
@@ -67,6 +66,7 @@ TERRAIN.Terrain3D = function(parent) {
 			this.yHeight[i] = quickBrightness;
 		}
 		*/
+
 		// don't edit below this point
 		this.superInit.call(this);	
 	}
@@ -75,7 +75,6 @@ TERRAIN.Terrain3D = function(parent) {
 		var i;
 		var x,y,z;
 		var total = this.totalXIncrements * this.totalZIncrements;
-		
 
 		/*
 		// --------------------------------------------------------
@@ -96,12 +95,12 @@ TERRAIN.Terrain3D = function(parent) {
 		for(i = 0; i < total; i++){
 			z = parseInt(i/this.totalXIncrements);
 			x = i%this.totalXIncrements;
-			y = ( i % TERRAIN.Params.modulusIncrement == 0) ? 1 : 0;
+			y = ( i % TERRAIN.Params.modulusIncrement <= TERRAIN.Params.modulusRange) ? 1 : 0;
 			this.yHeight[i] = y;
 		}
 		*/ 
 		
-			
+		/*		
 		// --------------------------------------------------------
 		// perlin
 		// --------------------------------------------------------
@@ -119,12 +118,13 @@ TERRAIN.Terrain3D = function(parent) {
 			y =  y*0.5 + 0.5;
 			this.yHeight[i] = y;
 		}
-		
-
+		*/
 
 		// don't edit below this point
 		this.superUpdate.call(this);
 	}
+
+
 };
 
 TERRAIN.Terrain3D.prototype = Object.create(TERRAIN.BoilerPlate3D.prototype);
