@@ -6,7 +6,6 @@
 TERRAIN.Terrain3D = function(parent) {
 	var scope = this;
     this.parent.constructor.call(this);
-
     this.superInit = this.init;
     this.superUpdate = this.update;
 	this.name = 'Terrain3D';
@@ -102,7 +101,7 @@ TERRAIN.Terrain3D = function(parent) {
 		}
 		*/ 
 		
-		/*
+		
 		// --------------------------------------------------------
 		// perlin
 		// --------------------------------------------------------
@@ -120,7 +119,7 @@ TERRAIN.Terrain3D = function(parent) {
 			y =  y*0.5 + 0.5;
 			this.yHeight[i] = y;
 		}
-		*/
+		
 
 		// don't edit below this point
 		this.superUpdate.call(this);
