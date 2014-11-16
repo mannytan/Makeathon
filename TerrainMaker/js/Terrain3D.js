@@ -35,10 +35,7 @@ TERRAIN.Terrain3D = function(parent) {
 		var x,y,z;
 		var total = this.totalXIncrements * this.totalZIncrements;
 		for(i = 0; i < total; i++){
-			z = parseInt(i/this.totalXIncrements);
-			x = i%this.totalXIncrements;
-			y = Math.random();
-			this.yHeight[i] = y;
+			this.yHeight[i] = Math.random();
 		}
 		*/
 
@@ -81,10 +78,7 @@ TERRAIN.Terrain3D = function(parent) {
 		// randomizer
 		// --------------------------------------------------------
 		for(i = 0; i < total; i++){
-			z = parseInt(i/this.totalXIncrements);
-			x = i%this.totalXIncrements;
-			y = Math.random();
-			this.yHeight[i] = y;
+			this.yHeight[i] = Math.random();
 		}
 		*/
 
