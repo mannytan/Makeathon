@@ -27,8 +27,8 @@ TERRAIN.Terrain3D = function(parent) {
 			0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
 			0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
 		]; 
-		
-		
+
+		/*
 		// --------------------------------------------------------
 		// randomizer
 		// --------------------------------------------------------
@@ -41,7 +41,7 @@ TERRAIN.Terrain3D = function(parent) {
 			y = Math.random();
 			this.yHeight[i] = y;
 		}
-		
+		*/
 
 		/*
 		// --------------------------------------------------------
@@ -67,7 +67,6 @@ TERRAIN.Terrain3D = function(parent) {
 			this.yHeight[i] = quickBrightness;
 		}
 		*/
-
 		// don't edit below this point
 		this.superInit.call(this);	
 	}
@@ -77,6 +76,7 @@ TERRAIN.Terrain3D = function(parent) {
 		var x,y,z;
 		var total = this.totalXIncrements * this.totalZIncrements;
 		
+
 		/*
 		// --------------------------------------------------------
 		// randomizer
@@ -101,7 +101,7 @@ TERRAIN.Terrain3D = function(parent) {
 		}
 		*/ 
 		
-		
+			
 		// --------------------------------------------------------
 		// perlin
 		// --------------------------------------------------------
@@ -120,6 +120,7 @@ TERRAIN.Terrain3D = function(parent) {
 			this.yHeight[i] = y;
 		}
 		
+
 
 		// don't edit below this point
 		this.superUpdate.call(this);
