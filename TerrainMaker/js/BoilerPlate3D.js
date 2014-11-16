@@ -426,7 +426,7 @@ TERRAIN.BoilerPlate3D = function(name) {
 			this.wHelper = new THREE.WireframeHelper( this.sideTop );
 			this.scene.add( this.wHelper );
 
-			this.aHelper = new THREE.FaceNormalsHelper( this.sideTop,20);
+			this.aHelper = new THREE.FaceNormalsHelper( this.sideTop,5);
 			this.scene.add( this.aHelper );
 		}
 		
